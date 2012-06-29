@@ -12,33 +12,44 @@
     <slf4jVersion>1.6.6</slf4jVersion>
     <logbackVersion>1.0.6</logbackVersion>
     <canlVersion>1.0.1</canlVersion>
+    <trustmanagerVersion>3.0.5</trustmanagerVersion>
   </properties>
 
   <dependencies>
-  	<dependency>
-  		<groupId>ch.qos.logback</groupId>
-  		<artifactId>logback-core</artifactId>
-  		<version>${logbackVersion}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>ch.qos.logback</groupId>
-  		<artifactId>logback-classic</artifactId>
-  		<version>${logbackVersion}</version>
-  	</dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logbackVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logbackVersion}</version>
+    </dependency>
     <dependency>
       <groupId>org.eclipse.jetty.aggregate</groupId>
       <artifactId>jetty-all-server</artifactId>
       <version>${jettyVersion}</version>
     </dependency>
     <dependency>
-    	<groupId>eu.eu-emi.security</groupId>
-    	<artifactId>canl</artifactId>
-    	<version>${canlVersion}</version>
+      <groupId>eu.eu-emi.security</groupId>
+      <artifactId>canl</artifactId>
+      <version>${canlVersion}</version>
     </dependency>
     <dependency>
-    	<groupId>org.slf4j</groupId>
-    	<artifactId>slf4j-api</artifactId>
-    	<version>${slf4jVersion}</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4jVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>emi</groupId>
+      <artifactId>trustmanager</artifactId>
+      <version>${trustmanagerVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>${slf4jVersion}</version>
     </dependency>
   </dependencies>
 </project>
