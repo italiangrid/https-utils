@@ -12,8 +12,14 @@ import java.security.cert.CertificateException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.italiangrid.utils.https.SSLOptions;
 import org.italiangrid.utils.https.ServerFactory;
 import org.junit.After;
@@ -51,10 +57,23 @@ public class ConnectionTest {
 
 		server = ServerFactory.newServer("localhost", port, options);
 
-		server.setHandler(new HelloHandler());
+		Handler handler = new AbstractHandler() {
+
+			public void handle(String target, Request baseRequest,
+					HttpServletRequest request, HttpServletResponse response)
+					throws IOException, ServletException {
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.getWriter().println("<h1>Hello</h1>");
+				((Request) request).setHandled(true);
+
+			}
+		};
+
+		server.setHandler(handler);
 
 		server.start();
-		
+
 	}
 
 	/**
@@ -70,59 +89,62 @@ public class ConnectionTest {
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 		connection.connect();
-		
+
 	}
 
 	/**
-	 * Connect using a certificate released from a trusted CA. 
+	 * Connect using a certificate released from a trusted CA.
 	 * 
 	 */
 	@Test
-	public void trustedCertificateAgain() throws IOException, KeyStoreException, 
-		NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+	public void trustedCertificateAgain() throws IOException,
+			KeyStoreException, NoSuchAlgorithmException, CertificateException,
+			KeyManagementException, UnrecoverableKeyException {
 
 		/*
 		 * For localhost testing, disable hostname verification
-		 * 
 		 */
-		HttpsURLConnection.setDefaultHostnameVerifier( 
-				
-				new javax.net.ssl.HostnameVerifier(){
-					 
-			        public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
-			            
-			        	if (hostname.equals("localhost")) {
-			            
-			        		return true;
-			            }
-			            
-			        	return false;
-			        }
-			    });
-		
-		
-		PEMCredential credential = new PEMCredential("certs/voms-client-key.pem", 
-				"certs/voms-client-cert.pem", "pass".toCharArray());
-		
-		OpensslCertChainValidator validator = new OpensslCertChainValidator("certs/ca",
-				NamespaceCheckingMode.EUGRIDPMA_AND_GLOBUS, 60000L);
-		
-		SSLContext context = SocketFactoryCreator.getSSLContext(credential, validator, null);
-		
+		HttpsURLConnection.setDefaultHostnameVerifier(
+
+		new javax.net.ssl.HostnameVerifier() {
+
+			public boolean verify(String hostname,
+					javax.net.ssl.SSLSession sslSession) {
+
+				if (hostname.equals("localhost")) {
+
+					return true;
+				}
+
+				return false;
+			}
+		});
+
+		PEMCredential credential = new PEMCredential(
+				"certs/voms-client-key.pem", "certs/voms-client-cert.pem",
+				"pass".toCharArray());
+
+		OpensslCertChainValidator validator = new OpensslCertChainValidator(
+				"certs/ca", NamespaceCheckingMode.EUGRIDPMA_AND_GLOBUS, 60000L);
+
+		SSLContext context = SocketFactoryCreator.getSSLContext(credential,
+				validator, null);
+
 		URL url = new URL("https://localhost:" + port);
 
-		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		HttpsURLConnection connection = (HttpsURLConnection) url
+				.openConnection();
 
 		connection.setSSLSocketFactory(context.getSocketFactory());
-		
+
 		connection.connect();
 
 		Assert.assertEquals(200, connection.getResponseCode());
 
 		connection.disconnect();
-		
+
 	}
-	
+
 	/**
 	 * Tear down the testing environment. Stop the server.
 	 * 
@@ -132,7 +154,7 @@ public class ConnectionTest {
 	public void tearDown() throws Exception {
 
 		server.stop();
-		
+
 	}
 
 }
