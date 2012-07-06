@@ -62,7 +62,7 @@ public class ServerFactory {
 	 * 
 	 * @param host
 	 * @param port
-	 * @return
+	 * @return a {@link Server} configured as requested
 	 */
 	public static Server newServer(String host, int port) {
 		
@@ -78,7 +78,7 @@ public class ServerFactory {
 	 * @param host
 	 * @param port
 	 * @param options
-	 * @return
+	 * @return a {@link Server} configured as requested
 	 */
 	public static Server newServer(String host, int port, SSLOptions options){
 		

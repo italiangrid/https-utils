@@ -77,7 +77,7 @@ public class SSLContextConnectorConfigurator implements
 
 	/**
 	 * Returns the SSL context defined for this configurator
-	 * @return
+	 * @return the SSL context defined for this configurator
 	 */
 	public SSLContext getSslContext() {
 		return sslContext;

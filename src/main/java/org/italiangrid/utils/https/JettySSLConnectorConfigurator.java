@@ -17,7 +17,8 @@ public interface JettySSLConnectorConfigurator {
 	 * @param host the host the connector will bind to 
 	 * @param port the port the connector will bind to 
 	 * @param options the SSL configuration options
-	 * @return
+	 * @return a {@link Connector} configured as requested
+	 * 
 	 */
 	public Connector configureConnector(String host, int port, SSLOptions options);
 }
