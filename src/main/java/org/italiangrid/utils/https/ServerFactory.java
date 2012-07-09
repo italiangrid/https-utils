@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.nio.BlockingChannelConnector;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.italiangrid.utils.https.impl.canl.CANLSSLConnectorConfigurator;
 import org.slf4j.Logger;
@@ -95,9 +96,6 @@ public class ServerFactory {
 			throw new RuntimeException("Error creating SSL connector.");
 		
 		server.setConnectors(new Connector[] {connector});
-		return server;
-		
-		
+		return server;	
 	}
-
 }

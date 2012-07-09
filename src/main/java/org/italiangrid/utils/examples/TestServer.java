@@ -3,14 +3,16 @@ package org.italiangrid.utils.examples;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.italiangrid.utils.https.JettyAdminService;
+import org.italiangrid.utils.https.JettyRunThread;
+import org.italiangrid.utils.https.JettyShutdownTask;
 import org.italiangrid.utils.https.SSLOptions;
 import org.italiangrid.utils.https.ServerFactory;
 import org.italiangrid.utils.voms.VOMSSecurityContextHandler;
 
 /** 
- * A simple test server.
- * 
- * @author andreaceccanti
+ * A simple test server that demonstrates how to create an SSL-enabled server
+ * and a related shutdown service.
  *
  */
 public class TestServer {
@@ -34,8 +36,14 @@ public class TestServer {
 				new PrintAuthenticationInformationHandler()});
 		
 		s.setHandler(handlers);
-		s.start();
-		s.join();
+		
+		JettyRunThread rt = new JettyRunThread(s);
+		rt.start();
+		
+		JettyAdminService shutdownService = new JettyAdminService("localhost", port+1, "admin");
+		shutdownService.registerShutdownTask(new JettyShutdownTask(s));
+		
+		shutdownService.start();
 		
 	}
 	
