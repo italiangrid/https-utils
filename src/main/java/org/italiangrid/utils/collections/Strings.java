@@ -19,10 +19,11 @@
  * This code was borrowed from the Argus pdp-pep-common module:
  * See https://github.com/argus-authz/argus-pdp-pep-common
  */
-package org.italiangrid.utils;
+package org.italiangrid.utils.collections;
 
 import java.util.List;
 import java.util.StringTokenizer;
+
 
 /** Helper class for working with Strings. */
 public final class Strings {

@@ -2,6 +2,7 @@ package org.italiangrid.utils.examples;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.italiangrid.utils.voms.VOMSSecurityContext;
 import org.italiangrid.utils.voms.VOMSSecurityContextHandler;
+import org.italiangrid.voms.VOMSAttribute;
 
 /**
  * A simple handler which prints authentication information.
@@ -37,20 +39,20 @@ public class PrintAuthenticationInformationHandler extends AbstractHandler {
 		
 		String serialNumber = (sn == null) ? "NULL" : sn.toString();
 		
-		String[] fqans = sc.getFQANs();
+		List<VOMSAttribute> vomsAttributes = sc.getVOMSAttributes();
 		
-		String vomsFQANString = "No VOMS attributes found.";
+		String vomsAttrsString = "No valid VOMS attributes found.";
 		
-		if (fqans.length > 0)
-			vomsFQANString = String.format("VOMS attributes: %s .",StringUtils.join(fqans,","));
+		if (vomsAttributes.size() > 0)
+			vomsAttrsString = String.format("VOMS attributes: %s .",StringUtils.join(vomsAttributes,","));
 		
 		
-		String connectionMessage = String.format("<p>You connected from '%s', as '%s' (issued by '%s') serial: %s.</p><p>%s</p>", 
+		String connectionMessage = String.format("Connection from '%s' by '%s' (issued by '%s') serial: %s. %s", 
 				request.getRemoteAddr(),
 				sc.getClientDN().getRFCDNv2(),
 				sc.getIssuerDN().getRFCDNv2(),
 				serialNumber,
-				vomsFQANString);
+				vomsAttrsString);
         
 		response.getWriter().println(connectionMessage);
 

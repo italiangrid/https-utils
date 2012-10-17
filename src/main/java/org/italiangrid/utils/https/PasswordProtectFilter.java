@@ -27,7 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.italiangrid.utils.Strings;
+import org.italiangrid.utils.collections.Strings;
 
 /** A simple filter that password protects a request. */
 public class PasswordProtectFilter implements Filter {

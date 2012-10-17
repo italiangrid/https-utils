@@ -32,8 +32,8 @@ import org.eclipse.jetty.server.nio.BlockingChannelConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.italiangrid.utils.LazyList;
-import org.italiangrid.utils.Strings;
+import org.italiangrid.utils.collections.LazyList;
+import org.italiangrid.utils.collections.Strings;
 
 /**
  * A Jetty instance that listens on a give port for command requests.

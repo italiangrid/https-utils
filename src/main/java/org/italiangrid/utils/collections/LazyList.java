@@ -19,49 +19,62 @@
  * This code was borrowed from the Argus pdp-pep-common module:
  * See https://github.com/argus-authz/argus-pdp-pep-common
  */
-package org.italiangrid.utils;
+package org.italiangrid.utils.collections;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
- * A set that is lazy initialized. This set takes very little memory when storing zero or one item.
+ * A list that is lazy initialized. This list takes very little memory when storing zero or one item.
  * 
- * @param <ElementType> type of the elements within the set
+ * @param <ElementType> type of elements within the list
  */
 
-public class LazySet<ElementType> implements Set<ElementType>, Serializable {
+public class LazyList<ElementType> implements List<ElementType>, Serializable {
 
     /** Serial version UID. */
-    private static final long serialVersionUID = -1596445680460115174L;
+    private static final long serialVersionUID = -7741904523916701817L;
 
-    /** The delegate set. */
-    private Set<ElementType> delegate = Collections.emptySet();
+    /** Delegate list. */
+    private List<ElementType> delegate = Collections.emptyList();
 
     /** {@inheritDoc} */
-    public boolean add(ElementType element) {
+    public boolean add(ElementType item) {
         if (delegate.isEmpty()) {
-            delegate = Collections.singleton(element);
+            delegate = Collections.singletonList(item);
             return true;
         } else {
-            delegate = createImplementation();
-            return delegate.add(element);
+            delegate = buildList();
+            return delegate.add(item);
         }
     }
 
     /** {@inheritDoc} */
+    public void add(int index, ElementType element) {
+        delegate = buildList();
+        delegate.add(index, element);
+    }
+
+    /** {@inheritDoc} */
     public boolean addAll(Collection<? extends ElementType> collection) {
-        delegate = createImplementation();
+        delegate = buildList();
         return delegate.addAll(collection);
     }
 
     /** {@inheritDoc} */
+    public boolean addAll(int index, Collection<? extends ElementType> collection) {
+        delegate = buildList();
+        return delegate.addAll(index, collection);
+    }
+
+    /** {@inheritDoc} */
     public void clear() {
-        delegate = Collections.emptySet();
+        delegate = Collections.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -70,8 +83,18 @@ public class LazySet<ElementType> implements Set<ElementType>, Serializable {
     }
 
     /** {@inheritDoc} */
-    public boolean containsAll(Collection<?> collection) {
-        return delegate.containsAll(collection);
+    public boolean containsAll(Collection<?> collections) {
+        return delegate.containsAll(collections);
+    }
+
+    /** {@inheritDoc} */
+    public ElementType get(int index) {
+        return delegate.get(index);
+    }
+
+    /** {@inheritDoc} */
+    public int indexOf(Object element) {
+        return delegate.indexOf(element);
     }
 
     /** {@inheritDoc} */
@@ -85,26 +108,58 @@ public class LazySet<ElementType> implements Set<ElementType>, Serializable {
     }
 
     /** {@inheritDoc} */
+    public int lastIndexOf(Object element) {
+        return delegate.lastIndexOf(element);
+    }
+
+    /** {@inheritDoc} */
+    public ListIterator<ElementType> listIterator() {
+        return delegate.listIterator();
+    }
+
+    /** {@inheritDoc} */
+    public ListIterator<ElementType> listIterator(int index) {
+        return delegate.listIterator(index);
+    }
+
+    /** {@inheritDoc} */
     public boolean remove(Object element) {
-        delegate = createImplementation();
+        delegate = buildList();
         return delegate.remove(element);
     }
 
     /** {@inheritDoc} */
+    public ElementType remove(int index) {
+        delegate = buildList();
+        return delegate.remove(index);
+    }
+
+    /** {@inheritDoc} */
     public boolean removeAll(Collection<?> collection) {
-        delegate = createImplementation();
+        delegate = buildList();
         return delegate.removeAll(collection);
     }
 
     /** {@inheritDoc} */
     public boolean retainAll(Collection<?> collection) {
-        delegate = createImplementation();
+        delegate = buildList();
         return delegate.retainAll(collection);
+    }
+
+    /** {@inheritDoc} */
+    public ElementType set(int index, ElementType element) {
+        delegate = buildList();
+        return delegate.set(index, element);
     }
 
     /** {@inheritDoc} */
     public int size() {
         return delegate.size();
+    }
+
+    /** {@inheritDoc} */
+    public List<ElementType> subList(int fromIndex, int toIndex) {
+        return delegate.subList(fromIndex, toIndex);
     }
 
     /** {@inheritDoc} */
@@ -118,16 +173,16 @@ public class LazySet<ElementType> implements Set<ElementType>, Serializable {
     }
 
     /**
-     * Builds an appropriate delegate set.
+     * Builds an appropriate delegate for this list.
      * 
-     * @return the delegate set
+     * @return delegate for this list
      */
-    private Set<ElementType> createImplementation() {
-        if (delegate instanceof HashSet) {
+    protected List<ElementType> buildList() {
+        if (delegate instanceof ArrayList) {
             return delegate;
         }
 
-        return new HashSet<ElementType>(delegate);
+        return new ArrayList<ElementType>(delegate);
     }
     
     /** {@inheritDoc} */
@@ -150,6 +205,6 @@ public class LazySet<ElementType> implements Set<ElementType>, Serializable {
             return false;
         }
 
-        return delegate.equals(((LazySet<?>) obj).delegate);
+        return delegate.equals(((LazyList<?>) obj).delegate);
     }
 }

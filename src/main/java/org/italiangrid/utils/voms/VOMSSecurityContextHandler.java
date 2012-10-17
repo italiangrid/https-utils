@@ -3,6 +3,7 @@ package org.italiangrid.utils.voms;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.italiangrid.voms.VOMSAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,12 +62,12 @@ public class VOMSSecurityContextHandler extends AbstractHandler implements Handl
 		
 		String serialNumber = (sn == null) ? "NULL" : sn.toString();
 		
-		String[] fqans = sc.getFQANs();
+		List<VOMSAttribute> vomsAttributes = sc.getVOMSAttributes();
 		
-		String vomsFQANString = "No VOMS attributes found.";
+		String vomsAttrsString = "No valid VOMS attributes found.";
 		
-		if (fqans.length > 0)
-			vomsFQANString = String.format("VOMS attributes: %s .",StringUtils.join(fqans,","));
+		if (vomsAttributes.size() > 0)
+			vomsAttrsString = String.format("VOMS attributes: %s .",StringUtils.join(vomsAttributes,","));
 		
 		
 		String connectionMessage = String.format("Connection from '%s' by '%s' (issued by '%s') serial: %s. %s", 
@@ -73,7 +75,7 @@ public class VOMSSecurityContextHandler extends AbstractHandler implements Handl
 				sc.getClientDN().getRFCDNv2(),
 				sc.getIssuerDN().getRFCDNv2(),
 				serialNumber,
-				vomsFQANString);
+				vomsAttrsString);
 		
 		log.info(connectionMessage);
 	}

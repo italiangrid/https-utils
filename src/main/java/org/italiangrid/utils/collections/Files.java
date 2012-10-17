@@ -19,11 +19,12 @@
  * This code was borrowed from the Argus pdp-pep-common module:
  * See https://github.com/argus-authz/argus-pdp-pep-common
  */
-package org.italiangrid.utils;
+package org.italiangrid.utils.collections;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 
 /** A utility class for working with files. */
 public final class Files {

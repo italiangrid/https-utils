@@ -3,20 +3,23 @@ package org.italiangrid.utils.voms;
 
 
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import org.glite.security.SecurityContext;
-import org.glite.voms.VOMSValidator;
+import org.italiangrid.voms.VOMSAttribute;
+import org.italiangrid.voms.VOMSValidators;
+import org.italiangrid.voms.ac.VOMSACValidator;
 
 /**
  * A class representing an X.509 authentication context augmented with VOMS attributes. The context is stored in a {@link ThreadLocal}.
  * The validation and extraction of VOMS attributes is triggered by the {@link #setClientCertChain(X509Certificate[])} method.
  * 
- * Attributes can then be accessed via the {@link #getFQANs()} method. When VOMS validation fails, no attributes are returned. 
+ * Attributes can then be accessed via the {@link #getVOMSAttributes()} method. When VOMS validation fails, no attributes are returned. 
  *   
  * @author andreaceccanti
  *
  */
-public class VOMSSecurityContext extends SecurityContext implements VOMSSecurityInfo{
+public class VOMSSecurityContext extends SecurityContext{
 
 	/**
 	 * 
@@ -25,7 +28,7 @@ public class VOMSSecurityContext extends SecurityContext implements VOMSSecurity
 	
 	private static ThreadLocal<VOMSSecurityContext> theSecurityContexts = new ThreadLocal<VOMSSecurityContext>();
 	
-	private VOMSValidator validator;
+	private VOMSACValidator validator;
 	
 	
 	@Override
@@ -36,12 +39,9 @@ public class VOMSSecurityContext extends SecurityContext implements VOMSSecurity
 		super.setClientCertChain(certChain);
 		
 		if (validator == null)
-			validator = new VOMSValidator(certChain);
-		else
-			validator.setClientChain(certChain);
+			validator = VOMSValidators.newValidator();
 		
-		validator.validate();
-		
+		validator.setCertificateChain(certChain);
 	}
 	
 	/**
@@ -72,26 +72,28 @@ public class VOMSSecurityContext extends SecurityContext implements VOMSSecurity
 
 
 	/**
-	 * Returns the {@link VOMSValidator} used to validate VOMS attributes extracted from client certificate chains
+	 * Returns the {@link VOMSACValidator} used to validate VOMS attributes extracted from client certificate chains
 	 * 
 	 * @return the VOMS validator used to validate VOMS attributes
 	 */
-	public VOMSValidator getValidator() {
+	public VOMSACValidator getValidator() {
 		return validator;
 	}
 
 	/**
-	 * Sets the {@link VOMSValidator} used to validate VOMS attributes extracted from client certificate chains
+	 * Sets the {@link VOMSACValidator} used to validate VOMS attributes extracted from client certificate chains
 	 * 
 	 * @param validator the VOMS validator that will be used to validate VOMS attributes
 	 */
-	public void setValidator(VOMSValidator validator) {
+	public void setValidator(VOMSACValidator validator) {
 		this.validator = validator;
 	}
 
-	public String[] getFQANs() {
-		
-		return validator.getAllFullyQualifiedAttributes();
+	/**
+	 *  
+	 * @return a list of validated {@link VOMSAttribute} objects.
+	 */
+	public List<VOMSAttribute> getVOMSAttributes(){
+		return validator.validate();
 	}
-	
 }

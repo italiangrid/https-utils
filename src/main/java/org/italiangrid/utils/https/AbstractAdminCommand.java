@@ -19,7 +19,7 @@ package org.italiangrid.utils.https;
 
 import javax.servlet.http.HttpServlet;
 
-import org.italiangrid.utils.Strings;
+import org.italiangrid.utils.collections.Strings;
 
 /** Base class for administration commands which may be registered with a {@link JettyAdminService}. */
 public abstract class AbstractAdminCommand extends HttpServlet {

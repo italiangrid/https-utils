@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>https-utils</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <name>https-utils</name>
 
   <properties>
@@ -14,9 +14,9 @@
     <jettyVersion>8.1.4.v20120524</jettyVersion>
     <slf4jVersion>1.6.6</slf4jVersion>
     <logbackVersion>1.0.6</logbackVersion>
-    <canlVersion>1.0.1</canlVersion>
+    <canlVersion>1.1.0-SNAPSHOT</canlVersion>
     <trustmanagerVersion>3.0.5</trustmanagerVersion>
-    <vomsApiJavaVersion>2.0.9-SNAPSHOT</vomsApiJavaVersion>
+    <vomsApiJavaVersion>3.0-SNAPSHOT</vomsApiJavaVersion>
   </properties>
 
   <build>
@@ -32,17 +32,6 @@
     </plugins>
   </build>
   
-  <repositories>
-    <repository>
-      <id>cnaf-snapshots</id>
-      <name>CNAF snapshots</name>
-      <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -89,8 +78,9 @@
     <dependency>
       <groupId>org.italiangrid</groupId>
       <artifactId>voms-api-java</artifactId>
-      <version>2.0.9-SNAPSHOT</version>
+      <version>${vomsApiJavaVersion}</version>
     </dependency>
+    
   </dependencies>
   
   <distributionManagement>
