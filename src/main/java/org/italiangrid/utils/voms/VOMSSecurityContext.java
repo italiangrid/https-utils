@@ -41,7 +41,6 @@ public class VOMSSecurityContext extends SecurityContext{
 		if (validator == null)
 			validator = VOMSValidators.newValidator();
 		
-		validator.setCertificateChain(certChain);
 	}
 	
 	/**
@@ -94,6 +93,6 @@ public class VOMSSecurityContext extends SecurityContext{
 	 * @return a list of validated {@link VOMSAttribute} objects.
 	 */
 	public List<VOMSAttribute> getVOMSAttributes(){
-		return validator.validate();
+		return validator.validate(getClientCertChain());
 	}
 }

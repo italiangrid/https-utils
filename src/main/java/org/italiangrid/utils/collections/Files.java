@@ -113,6 +113,7 @@ public final class Files {
         } while (offset < bytes.length && numRead >= 0);
 
         if (offset < bytes.length) {
+        	ins.close();
             throw new IOException("Could not completely read file " + file.getName());
         }
 

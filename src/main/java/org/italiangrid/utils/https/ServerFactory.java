@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.BlockingChannelConnector;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.italiangrid.utils.https.impl.canl.CANLSSLConnectorConfigurator;
 import org.slf4j.Logger;
