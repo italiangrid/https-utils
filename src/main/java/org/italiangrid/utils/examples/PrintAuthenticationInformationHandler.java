@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.italiangrid.utils.voms.VOMSSecurityContext;
@@ -44,7 +43,7 @@ public class PrintAuthenticationInformationHandler extends AbstractHandler {
 		String vomsAttrsString = "No valid VOMS attributes found.";
 		
 		if (vomsAttributes.size() > 0)
-			vomsAttrsString = String.format("VOMS attributes: %s .",StringUtils.join(vomsAttributes,","));
+			vomsAttrsString = String.format("VOMS attributes: %s .",vomsAttributes);
 		
 		
 		String connectionMessage = String.format("Connection from '%s' by '%s' (issued by '%s') serial: %s. %s", 

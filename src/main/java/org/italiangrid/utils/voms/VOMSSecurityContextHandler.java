@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -66,8 +65,7 @@ public class VOMSSecurityContextHandler extends AbstractHandler implements Handl
 		
 		String vomsAttrsString = "No valid VOMS attributes found.";
 		
-		if (vomsAttributes.size() > 0)
-			vomsAttrsString = String.format("VOMS attributes: %s .",StringUtils.join(vomsAttributes,","));
+		vomsAttrsString = String.format("VOMS attributes: %s .",vomsAttributes);
 		
 		
 		String connectionMessage = String.format("Connection from '%s' by '%s' (issued by '%s') serial: %s. %s", 
