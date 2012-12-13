@@ -70,8 +70,8 @@ public class VOMSSecurityContextHandler extends AbstractHandler implements Handl
 		
 		String connectionMessage = String.format("Connection from '%s' by '%s' (issued by '%s') serial: %s. %s", 
 				request.getRemoteAddr(),
-				sc.getClientDN().getRFCDNv2(),
-				sc.getIssuerDN().getRFCDNv2(),
+				sc.getClientX500Name(),
+				sc.getIssuerX500Name(),
 				serialNumber,
 				vomsAttrsString);
 		

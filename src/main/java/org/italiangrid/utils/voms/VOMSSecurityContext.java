@@ -1,11 +1,8 @@
 package org.italiangrid.utils.voms;
 
-
-
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.glite.security.SecurityContext;
 import org.italiangrid.voms.VOMSAttribute;
 import org.italiangrid.voms.VOMSValidators;
 import org.italiangrid.voms.ac.VOMSACValidator;
