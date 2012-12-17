@@ -16,14 +16,9 @@ import org.italiangrid.voms.ac.VOMSACValidator;
  * @author andreaceccanti
  *
  */
-public class VOMSSecurityContext extends SecurityContext{
+public class VOMSSecurityContext extends SecurityContextImpl{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	private static ThreadLocal<VOMSSecurityContext> theSecurityContexts = new ThreadLocal<VOMSSecurityContext>();
+	private static ThreadLocal<VOMSSecurityContext> theSecurityContext = new ThreadLocal<VOMSSecurityContext>();
 	
 	private VOMSACValidator validator;
 	
@@ -46,7 +41,7 @@ public class VOMSSecurityContext extends SecurityContext{
 	 * @return the {@link VOMSSecurityContext} associated to the current thread
 	 */
 	public static VOMSSecurityContext getCurrentContext(){
-		return theSecurityContexts.get();
+		return theSecurityContext.get();
 	}
 	
 	/**
@@ -56,14 +51,14 @@ public class VOMSSecurityContext extends SecurityContext{
 	 */
 	public static void setCurrentContext(VOMSSecurityContext ctxt){
 		
-		theSecurityContexts.set(ctxt);
+		theSecurityContext.set(ctxt);
 	}
 	
 	/**
 	 * Clears the {@link VOMSSecurityContext} associated to the current thread
 	 */
 	public static void clearCurrentContext(){
-		theSecurityContexts.set(null);
+		theSecurityContext.set(null);
 	}
 
 
