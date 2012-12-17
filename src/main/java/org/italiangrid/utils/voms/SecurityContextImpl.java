@@ -1,8 +1,17 @@
 package org.italiangrid.utils.voms;
 
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
+
+import eu.emi.security.authn.x509.helpers.CertificateHelpers;
+import eu.emi.security.authn.x509.impl.KeyAndCertCredential;
 
 /**
  * 
@@ -190,22 +199,18 @@ public class SecurityContextImpl implements SecurityContext {
 
     this.clientCertChain = clientCertChain;
 
-    int i;
+    Certificate[] orderedClientCertChain = null;
+    
+    try {
 
-    // get the index for the first cert that isn't a CA or proxy cert
-    for (i = clientCertChain.length - 1; i >= 0; i--) {
+      orderedClientCertChain = CertificateHelpers.sortChain(Arrays.asList(clientCertChain));
+    
+    } catch (IOException e) {
 
-      // if constrainCheck = -1 the cert is NOT a CA cert
-      if (clientCertChain[i].getBasicConstraints() == -1) {
-
-        // double check, if issuerDN = subjectDN the cert is CA
-        if (!clientCertChain[i].getIssuerDN().equals(clientCertChain[i].getSubjectDN())) {
-          break;
-        }
-      }
+      throw new RuntimeException("Unexpecetd inconsistency in certificate chain", e);
     }
 
-    setClientCert(clientCertChain[i]);
+    setClientCert((X509Certificate) orderedClientCertChain[0]);
   }
 
   /**
