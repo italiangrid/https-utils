@@ -48,14 +48,21 @@ public class ServerFactory {
 	 * @param s
 	 */
 	private static void configureThreadPool(Server s){
+		configureThreadPool(s, MAX_CONNECTIONS, MAX_REQUEST_QUEUE_SIZE);
+	}
+	
+	private static void configureThreadPool(Server s, int maxRequestSize, int maxConnections){
+		if (maxRequestSize <= 0)
+			maxRequestSize = MAX_REQUEST_QUEUE_SIZE;
+		
+		if (maxConnections <= 0)
+			maxConnections = MAX_CONNECTIONS;
+		
 		BlockingQueue<Runnable> requestQueue;
 
-		requestQueue = new ArrayBlockingQueue<Runnable>(
-				MAX_REQUEST_QUEUE_SIZE);
-
-		s.setThreadPool(new ExecutorThreadPool(5, MAX_CONNECTIONS, 60,
+		requestQueue = new ArrayBlockingQueue<Runnable>(maxRequestSize);
+		s.setThreadPool(new ExecutorThreadPool(5, maxConnections, 60,
 				TimeUnit.SECONDS, requestQueue));
-		
 	}
 	
 	/**
@@ -112,14 +119,17 @@ public class ServerFactory {
 	 * @param validator 
 	 * @return a {@link Server} configured as requested
 	 */
-	public static Server newServer(String host, int port, SSLOptions options, X509CertChainValidatorExt validator){
+	public static Server newServer(String host, int port, SSLOptions options, 
+			X509CertChainValidatorExt validator,
+			int maxConnections,
+			int maxRequestQueueSize){
 		
 		Server server = new Server();
 		
 		server.setSendServerVersion(false);
 		server.setSendDateHeader(false);
 		
-		configureThreadPool(server);
+		configureThreadPool(server, maxConnections, maxRequestQueueSize);
 		
 		CANLSSLConnectorConfigurator configurator = new CANLSSLConnectorConfigurator(validator);
 		
