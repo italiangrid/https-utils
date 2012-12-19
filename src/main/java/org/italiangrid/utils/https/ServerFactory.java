@@ -11,6 +11,8 @@ import org.italiangrid.utils.https.impl.canl.CANLSSLConnectorConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.emi.security.authn.x509.X509CertChainValidatorExt;
+
 /**
  * A factory that creates Jetty server object with an HTTPS connector configured
  * according to the given options.
@@ -88,6 +90,38 @@ public class ServerFactory {
 		server.setSendDateHeader(false);
 		
 		configureThreadPool(server);
+		
+		Connector connector = configurator.configureConnector(host, port, options);
+		
+		if (connector == null)
+			throw new RuntimeException("Error creating SSL connector.");
+		
+		server.setConnectors(new Connector[] {connector});
+		return server;	
+	}
+	
+	
+	/**
+	 *  
+	 *  Returns a new Jetty server configured to listen on the host:port passed as argument and 
+	 *  according to the SSL configuration options provided.
+	 * 
+	 * @param host
+	 * @param port
+	 * @param options
+	 * @param validator 
+	 * @return a {@link Server} configured as requested
+	 */
+	public static Server newServer(String host, int port, SSLOptions options, X509CertChainValidatorExt validator){
+		
+		Server server = new Server();
+		
+		server.setSendServerVersion(false);
+		server.setSendDateHeader(false);
+		
+		configureThreadPool(server);
+		
+		CANLSSLConnectorConfigurator configurator = new CANLSSLConnectorConfigurator(validator);
 		
 		Connector connector = configurator.configureConnector(host, port, options);
 		

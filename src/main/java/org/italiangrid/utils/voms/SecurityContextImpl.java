@@ -207,7 +207,7 @@ public class SecurityContextImpl implements SecurityContext {
     
     } catch (IOException e) {
 
-      throw new RuntimeException("Unexpecetd inconsistency in certificate chain", e);
+      throw new RuntimeException(e.getMessage(), e);
     }
 
     setClientCert((X509Certificate) orderedClientCertChain[0]);

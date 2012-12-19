@@ -6,10 +6,12 @@ import org.eclipse.jetty.server.Connector;
 import org.italiangrid.utils.https.JettySSLConnectorConfigurator;
 import org.italiangrid.utils.https.SSLOptions;
 import org.italiangrid.utils.https.impl.SSLContextConnectorConfigurator;
+import org.italiangrid.voms.util.CertificateValidatorBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.emi.security.authn.x509.NamespaceCheckingMode;
+import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.impl.OpensslCertChainValidator;
 import eu.emi.security.authn.x509.impl.PEMCredential;
 import eu.emi.security.authn.x509.impl.SocketFactoryCreator;
@@ -28,6 +30,16 @@ public class CANLSSLConnectorConfigurator implements JettySSLConnectorConfigurat
 	
 	SSLContextConnectorConfigurator configurator;
 	
+	X509CertChainValidatorExt certChainValidator;
+	
+	public CANLSSLConnectorConfigurator() {
+		
+	}
+	
+	public CANLSSLConnectorConfigurator(X509CertChainValidatorExt validator){
+		this.certChainValidator = validator;
+	}
+	
 	public Connector configureConnector(String host, int port,
 			SSLOptions options) {
 		
@@ -38,14 +50,21 @@ public class CANLSSLConnectorConfigurator implements JettySSLConnectorConfigurat
 					options.getCertificateFile(), 
 					options.getKeyPassword());
 			
-			 
-			OpensslCertChainValidator validator = new OpensslCertChainValidator(options.getTrustStoreDirectory(),
-					DEFAULT_NAMESPACE_CHECKING_MODE,
-					options.getTrustStoreRefreshIntervalInMsec());
-					
-			validator.addValidationListener(new SSLValidationErrorReporter());
+			if (certChainValidator == null){
+				CANLListener l = new CANLListener();
+				
+				certChainValidator = CertificateValidatorBuilder
+						.buildCertificateValidator(options.getTrustStoreDirectory(), 
+								l,
+								l,
+								options.getTrustStoreRefreshIntervalInMsec());
+			}
 			
-			SSLContext sslContext = SocketFactoryCreator.getSSLContext(serviceCredentials, validator, null);
+			
+			SSLContext sslContext = SocketFactoryCreator.getSSLContext(serviceCredentials, 
+					certChainValidator, 
+					null);
+			
 			configurator = new SSLContextConnectorConfigurator(sslContext);
 			
 			return configurator.configureConnector(host, port, options);
