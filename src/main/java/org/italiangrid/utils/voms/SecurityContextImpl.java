@@ -10,6 +10,7 @@ import javax.security.auth.x500.X500Principal;
 import eu.emi.security.authn.x509.helpers.CertificateHelpers;
 import eu.emi.security.authn.x509.impl.OpensslNameUtils;
 import eu.emi.security.authn.x509.impl.X500NameUtils;
+import eu.emi.security.authn.x509.proxy.ProxyUtils;
 
 /**
  * 
@@ -214,7 +215,11 @@ public class SecurityContextImpl implements SecurityContext {
 	}
 
 	/**
-	 * This method also automatically sets the client certificate.
+	 * This method sets the client cert chain for this context and initializes
+	 * the client certificate as well.
+	 * 
+	 * If the chain passed as argument is a proxy certificate chain, the client
+	 * certificate is set from the user certificate present in the chain. 
 	 * 
 	 * @param clientCertChain
 	 *            The client's certificate chain
@@ -234,7 +239,11 @@ public class SecurityContextImpl implements SecurityContext {
 		}
 		
 		this.clientCertChain = orderedClientCertChain;
-		setClientCert((X509Certificate) orderedClientCertChain[0]);
+		
+		if (ProxyUtils.isProxy(clientCertChain)){
+			setClientCert(ProxyUtils.getEndUserCertificate(clientCertChain));
+		}
+		
 	}
 
 	/**
