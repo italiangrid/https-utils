@@ -242,6 +242,8 @@ public class SecurityContextImpl implements SecurityContext {
 		
 		if (ProxyUtils.isProxy(clientCertChain)){
 			setClientCert(ProxyUtils.getEndUserCertificate(clientCertChain));
+		}else{
+			setClientCert(clientCertChain[0]);
 		}
 		
 	}
