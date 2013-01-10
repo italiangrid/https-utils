@@ -42,6 +42,22 @@ public interface SecurityContext {
    */
   public X500Principal getClientX500Principal();
   
+  
+  /**
+   * Returns the name of the authenticated client's certificate in OpenSSL /-separated format
+   * for distinguished names.
+   * 
+   * @return the client name in OpenSSL /-separated format
+   */
+  public String getClientName();
+  
+  /**
+   * Returns the name of the issuer of the authenticated client's certificate in OpenSSL /-separated
+   * format for distinguished names.
+   * @return the issuer name in OpenSSL /-separated format
+   */
+  public String getIssuerName();
+  
   /**
    * Returns the name of the issuer of the authenticated client's
    * certificate in RFC 2253 string format for distinguished names.

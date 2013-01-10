@@ -1,253 +1,309 @@
 package org.italiangrid.utils.voms;
 
 import java.io.IOException;
-import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
 
 import eu.emi.security.authn.x509.helpers.CertificateHelpers;
-import eu.emi.security.authn.x509.impl.KeyAndCertCredential;
+import eu.emi.security.authn.x509.impl.OpensslNameUtils;
+import eu.emi.security.authn.x509.impl.X500NameUtils;
 
 /**
  * 
  * 
  * @author valerioventuri
- *
+ * 
  */
 public class SecurityContextImpl implements SecurityContext {
 
-  /**
-   * The client certificate.
-   */
-  private X509Certificate clientCert;
-  
-  /**
-   * The client certificate chain.
-   */
-  private X509Certificate[] clientCertChain;
-  
-  /**
-   * The client name, in a string formatted according to RFC2253.
-   */
-  private String clientX500Name;
-  
-  /**
-   * The client {@link X500Principal}.
-   */
-  private X500Principal clientX500Principal;
-  
+	/**
+	 * The client certificate.
+	 */
+	private X509Certificate clientCert;
 
-  /**
-   * The client's certificate issuer name, in a string formatted according to RFC2253.
-   */
-  private String issuerX500Name;
-  
-  /**
-   * The client's certificate issuer {@link X500Principal}.
-   */
-  private X500Principal issuerX500Principal;
-  
-  /**
-   * The ip address of the client.
-   */
-  private String remoteAddr;
-  
-  /**
-   * The identified of the ssl session.
-   */
-  private String sessionId;
-  
-  /** 
-   * Thread local storage for locating the active security context. 
-   */
-  private static ThreadLocal<SecurityContextImpl> theSecurityContext = new ThreadLocal<SecurityContextImpl>();
+	/**
+	 * The client certificate chain.
+	 */
+	private X509Certificate[] clientCertChain;
 
-  /**
-   * Get the security context associated with the current thread.
-   * 
-   * @return SecurityContext the SecurityContext associated with the current thread.
-   */
-  public static SecurityContextImpl getCurrentContext() {
-    return theSecurityContext.get();
-  }
+	/**
+	 * The client name, in a string formatted according to RFC2253.
+	 */
+	private String clientX500Name;
 
-  /**
-   * Set the security context associated with the current thread.
-   * 
-   * @param sc the {@link SecurityContextImpl} associated with the current thread.
-   */
-  public static void setCurrentContext(SecurityContextImpl sc) {
-    theSecurityContext.set(sc);
-  }
+	/**
+	 * The client {@link X500Principal}.
+	 */
+	private X500Principal clientX500Principal;
 
-  /**
-   * Clears any set SecurityContext associated with the current thread. This is identical to
-   * <code>SecurityContext.setCurrentContext(null)</code>.
-   */
-  public static void clearCurrentContext() {
-    theSecurityContext.set(null);
-  }
+	/**
+	 * The client's certificate issuer name, in a string formatted according to
+	 * RFC2253.
+	 */
+	private String issuerX500Name;
 
-  /**
-   * Set the client certificate. This method also automatically sets the client and issuer name.
-   * 
-   * @param clientCert The identity certificate of the authenticated client
-   * 
-   */
-  public void setClientCert(X509Certificate clientCert) {
+	/**
+	 * The client's certificate subject in OpenSSL /-separated format.
+	 */
+	private String clientName;
 
-    this.clientCert = clientCert;
-    
-    X500Principal subject = clientCert.getSubjectX500Principal();
-    setClientX500Principal(subject);
-    setClientX500Name(subject.getName());
+	/**
+	 * The client's certificate issuer in OpenSSL /-separated format.
+	 */
+	private String issuerName;
 
-    X500Principal issuer = clientCert.getIssuerX500Principal();
-    setIssuerX500Principal(issuer);
-  }
+	/**
+	 * The client's certificate issuer {@link X500Principal}.
+	 */
+	private X500Principal issuerX500Principal;
 
-  /**
-   * Get the client certificate.
-   * 
-   * @return X509Certificate The identity certificate of the authenticated client
-   * @see #CLIENT_NAME
-   * @see #setClientCert(X509Certificate)
-   */
-  public X509Certificate getClientCert() {
-    return clientCert;
-  }
+	/**
+	 * The ip address of the client.
+	 */
+	private String remoteAddr;
 
-  /**
-   * Set the name of the client, as a {@link String} containing the RFC2253 
-   * representation of the name.
-   *
-   * @param clientX500Name The name of the authenticated client
-   */
-  public void setClientX500Name(String clientX500Name) {
-    this.clientX500Name = clientX500Name;
-  }
+	/**
+	 * The identified of the ssl session.
+	 */
+	private String sessionId;
 
-  /**
-   * Get the name of the client, as a {@link String} containing the RFC2253 
-   * representation of the name.
-   * 
-   * @return String The name of the authenticated client
-   * @see #CLIENT_X500_NAME
-   * @see #setClientX500Name(String)
-   */
-  public String getClientX500Name() {
-    return clientX500Name;
-  }
+	/**
+	 * Thread local storage for locating the active security context.
+	 */
+	private static ThreadLocal<SecurityContextImpl> theSecurityContext = new ThreadLocal<SecurityContextImpl>();
 
-  /**
-   * Set the name of the client, as a {@link X500Principal} object.
-   * 
-   * @param clientX500Principal The name of the authenticated client
-   */
-  public void setClientX500Principal(X500Principal clientX500Principal) {
-    this.clientX500Principal = clientX500Principal;
-  }
+	/**
+	 * Get the security context associated with the current thread.
+	 * 
+	 * @return SecurityContext the SecurityContext associated with the current
+	 *         thread.
+	 */
+	public static SecurityContextImpl getCurrentContext() {
+		return theSecurityContext.get();
+	}
 
-  /**
-   * Set the name of the client, as a {@link X500Principal} object.
-   * 
-   * @return X500Principal The Principal of the authenticated client
-   */
-  public X500Principal getClientX500Principal() {
-    return clientX500Principal;
-  }
+	/**
+	 * Set the security context associated with the current thread.
+	 * 
+	 * @param sc
+	 *            the {@link SecurityContextImpl} associated with the current
+	 *            thread.
+	 */
+	public static void setCurrentContext(SecurityContextImpl sc) {
+		theSecurityContext.set(sc);
+	}
 
-  /**
-   * @param clientName The name of the authenticated client
-   */
-  public void setIssuerX500Name(String issuerName) {
-    this.issuerX500Name = issuerName;
-  }
+	/**
+	 * Clears any set SecurityContext associated with the current thread. This
+	 * is identical to <code>SecurityContext.setCurrentContext(null)</code>.
+	 */
+	public static void clearCurrentContext() {
+		theSecurityContext.set(null);
+	}
 
-  /**
-   * @return String The name of the authenticated client
-   */
-  public String getIssuerX500Name() {
-    return issuerX500Name;
-  }
+	/**
+	 * Set the client certificate. This method also automatically sets the
+	 * client and issuer name.
+	 * 
+	 * @param clientCert
+	 *            The identity certificate of the authenticated client
+	 * 
+	 */
+	public void setClientCert(X509Certificate clientCert) {
 
-  /**
-   * @param issuerPrincipal The name of the authenticated client
-   */
-  public void setIssuerX500Principal(X500Principal issuerPrincipal) {
-    this.issuerX500Principal = issuerPrincipal;
-  }
+		this.clientCert = clientCert;
 
-  /**
-   * @return X500Principal The Principal of the authenticated client
-   */
-  public X500Principal getIssuerX500Principal() {
-    return issuerX500Principal;
-  }
+		X500Principal subject = clientCert.getSubjectX500Principal();
+		setClientX500Principal(subject);
+		setClientX500Name(X500NameUtils.getReadableForm(subject));
+		
+		setClientName(OpensslNameUtils.convertFromRfc2253(getClientX500Name(), false));
+		
+		X500Principal issuer = clientCert.getIssuerX500Principal();
+		
+		setIssuerX500Principal(issuer);
+		setIssuerX500Name(X500NameUtils.getReadableForm(issuer));
+		setIssuerName(OpensslNameUtils.convertFromRfc2253(getIssuerX500Name(), false));
+	}
 
-  /**
-   * This method also automatically sets the client certificate.
-   * 
-   * @param clientCertChain The client's certificate chain
-   */
-  public void setClientCertChain(X509Certificate[] clientCertChain) {
+	/**
+	 * Get the client certificate.
+	 * 
+	 * @return X509Certificate The identity certificate of the authenticated
+	 *         client
+	 * @see #CLIENT_NAME
+	 * @see #setClientCert(X509Certificate)
+	 */
+	public X509Certificate getClientCert() {
+		return clientCert;
+	}
 
-    this.clientCertChain = clientCertChain;
+	/**
+	 * Set the name of the client, as a {@link String} containing the RFC2253
+	 * representation of the name.
+	 * 
+	 * @param clientX500Name
+	 *            The name of the authenticated client
+	 */
+	public void setClientX500Name(String clientX500Name) {
+		this.clientX500Name = clientX500Name;
+	}
 
-    Certificate[] orderedClientCertChain = null;
-    
-    try {
+	/**
+	 * Get the name of the client, as a {@link String} containing the RFC2253
+	 * representation of the name.
+	 * 
+	 * @return String The name of the authenticated client
+	 * @see #CLIENT_X500_NAME
+	 * @see #setClientX500Name(String)
+	 */
+	public String getClientX500Name() {
+		return clientX500Name;
+	}
 
-      orderedClientCertChain = CertificateHelpers.sortChain(Arrays.asList(clientCertChain));
-    
-    } catch (IOException e) {
+	/**
+	 * Set the name of the client, as a {@link X500Principal} object.
+	 * 
+	 * @param clientX500Principal
+	 *            The name of the authenticated client
+	 */
+	public void setClientX500Principal(X500Principal clientX500Principal) {
+		this.clientX500Principal = clientX500Principal;
+	}
 
-      throw new RuntimeException(e.getMessage(), e);
-    }
+	/**
+	 * Set the name of the client, as a {@link X500Principal} object.
+	 * 
+	 * @return X500Principal The Principal of the authenticated client
+	 */
+	public X500Principal getClientX500Principal() {
+		return clientX500Principal;
+	}
 
-    setClientCert((X509Certificate) orderedClientCertChain[0]);
-  }
+	/**
+	 * @param clientName
+	 *            The name of the authenticated client
+	 */
+	public void setIssuerX500Name(String issuerName) {
+		this.issuerX500Name = issuerName;
+	}
 
-  /**
-   * @return X509Certificate[] The client's certificate chain
-   */
-  public X509Certificate[] getClientCertChain() {
-    return clientCertChain;
-  }
+	/**
+	 * @return String The name of the authenticated client
+	 */
+	public String getIssuerX500Name() {
+		return issuerX500Name;
+	}
 
-  /**
-   * Sets the IP address of the other party.
-   * 
-   * @param remoteAddr the IP address of the other party to save
-   */
-  public void setRemoteAddr(String remoteAddr) {
-    this.remoteAddr = remoteAddr;
-  }
+	/**
+	 * @param issuerPrincipal
+	 *            The name of the authenticated client
+	 */
+	public void setIssuerX500Principal(X500Principal issuerPrincipal) {
+		this.issuerX500Principal = issuerPrincipal;
+	}
 
-  /**
-   * @return the IP address of the other party.
-   */
-  public String getRemoteAddr() {
-    return remoteAddr;
-  }
+	/**
+	 * @return X500Principal The Principal of the authenticated client
+	 */
+	public X500Principal getIssuerX500Principal() {
+		return issuerX500Principal;
+	}
 
-  /**
-   * @param the SSL session ID used for this connection.
-   */
-  public void setSessionId(String sessionId) {
-    this.sessionId = sessionId;
-  }
+	/**
+	 * This method also automatically sets the client certificate.
+	 * 
+	 * @param clientCertChain
+	 *            The client's certificate chain
+	 */
+	public void setClientCertChain(X509Certificate[] clientCertChain) {
 
-  /**
-   * @return the SSL session ID used for this connection.
-   */
-  public String getSessionId() {
-    return sessionId;
-  }
+		X509Certificate[] orderedClientCertChain = null;
+
+		try {
+
+			orderedClientCertChain = CertificateHelpers.sortChain(Arrays
+					.asList(clientCertChain));
+
+		} catch (IOException e) {
+
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		
+		this.clientCertChain = orderedClientCertChain;
+		setClientCert((X509Certificate) orderedClientCertChain[0]);
+	}
+
+	/**
+	 * @return X509Certificate[] The client's certificate chain
+	 */
+	public X509Certificate[] getClientCertChain() {
+		return clientCertChain;
+	}
+
+	/**
+	 * Sets the IP address of the other party.
+	 * 
+	 * @param remoteAddr
+	 *            the IP address of the other party to save
+	 */
+	public void setRemoteAddr(String remoteAddr) {
+		this.remoteAddr = remoteAddr;
+	}
+
+	/**
+	 * @return the IP address of the other party.
+	 */
+	public String getRemoteAddr() {
+		return remoteAddr;
+	}
+
+	/**
+	 * @param the
+	 *            SSL session ID used for this connection.
+	 */
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	/**
+	 * @return the SSL session ID used for this connection.
+	 */
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	/**
+	 * @return the clientName
+	 */
+	public String getClientName() {
+		return clientName;
+	}
+
+	/**
+	 * @param clientName
+	 *            the clientName to set
+	 */
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+
+	/**
+	 * @return the issuerName
+	 */
+	public String getIssuerName() {
+		return issuerName;
+	}
+
+	/**
+	 * @param issuerName
+	 *            the issuerName to set
+	 */
+	public void setIssuerName(String issuerName) {
+		this.issuerName = issuerName;
+	}
 
 }
