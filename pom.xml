@@ -14,7 +14,7 @@
     <jettyVersion>8.1.4.v20120524</jettyVersion>
     <slf4jVersion>1.6.6</slf4jVersion>
     <logbackVersion>1.0.6</logbackVersion>
-    <vomsApiJavaVersion>3.0.0-rc2</vomsApiJavaVersion>
+    <vomsApiJavaVersion>3.0.0</vomsApiJavaVersion>
   </properties>
 
   <build>
