@@ -50,8 +50,8 @@ public class ConnectionTest {
 	public void setUp() throws Exception {
 
 		SSLOptions options = new SSLOptions();
-		options.setCertificateFile("certs/voms-service-cert.pem");
-		options.setKeyFile("certs/voms-service-key.pem");
+		options.setCertificateFile("certs/voms_service.cert.pem");
+		options.setKeyFile("certs/voms_service.key.pem");
 		options.setTrustStoreDirectory("certs/ca");
 		options.setWantClientAuth(true);
 
@@ -121,7 +121,7 @@ public class ConnectionTest {
 		});
 
 		PEMCredential credential = new PEMCredential(
-				"certs/voms-client-key.pem", "certs/voms-client-cert.pem",
+				"certs/voms_client.key.pem", "certs/voms_client.cert.pem",
 				"pass".toCharArray());
 
 		OpensslCertChainValidator validator = new OpensslCertChainValidator(

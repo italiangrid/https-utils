@@ -13,11 +13,13 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.italiangrid.voms.VOMSAttribute;
+import org.italiangrid.voms.VOMSValidators;
+import org.italiangrid.voms.ac.VOMSACValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Jetty Handler that initializes a {@link VOMSSecurityContext} and logs a message about
+ * A Jetty Handler that initializes a {@link VOMSSecurityContextImpl} and logs a message about
  * the authenticated connection.
  * 
  * It should be included in front of other handlers to initialize the security context so that handlers
@@ -31,14 +33,21 @@ public class VOMSSecurityContextHandler extends AbstractHandler implements Handl
 
 	public static final Logger log = LoggerFactory.getLogger(VOMSSecurityContextHandler.class);
 
+	
+	private VOMSACValidator validator;
+	
+	public VOMSSecurityContextHandler(VOMSACValidator validator) {
+		this.validator = validator;
+	}
+	
+	
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		
-		VOMSSecurityContext.clearCurrentContext();
-		
-		VOMSSecurityContext sc = new VOMSSecurityContext();
-		VOMSSecurityContext.setCurrentContext(sc);
+		CurrentSecurityContext.clear();
+		VOMSSecurityContext sc = new VOMSSecurityContextImpl(validator);
+		CurrentSecurityContext.set(sc);
 		
 		X509Certificate[] certChain = null;
 		

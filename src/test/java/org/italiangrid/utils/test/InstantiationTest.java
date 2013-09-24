@@ -21,8 +21,8 @@ public class InstantiationTest {
 		
 		SSLOptions options = new SSLOptions();
 		
-		options.setCertificateFile("certs/voms-service-cert.pe");
-		options.setKeyFile("certs/voms-service-key.pem");
+		options.setCertificateFile("certs/voms_service.cert.pe");
+		options.setKeyFile("certs/voms_service.key.pem");
 		options.setTrustStoreDirectory("certs/ca");
 		
 		ServerFactory.newServer("localhost", 443, options);
@@ -39,8 +39,8 @@ public class InstantiationTest {
 		
 		SSLOptions options = new SSLOptions();
 		
-		options.setCertificateFile("certs/voms-service-cert.pem");
-		options.setKeyFile("certs/voms-service-key.pe");
+		options.setCertificateFile("certs/voms_service.cert.pem");
+		options.setKeyFile("certs/voms_service.key.pe");
 		options.setTrustStoreDirectory("certs/ca");
 		
 		ServerFactory.newServer("localhost", 443, options);
@@ -57,7 +57,7 @@ public class InstantiationTest {
 		SSLOptions options = new SSLOptions();
 		
 		options.setCertificateFile("certs/README");
-		options.setKeyFile("certs/voms-service-key.pem");
+		options.setKeyFile("certs/voms_service.key.pem");
 		options.setTrustStoreDirectory("certs/ca");
 		
 		ServerFactory.newServer("localhost", 443, options);

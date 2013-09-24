@@ -1,7 +1,6 @@
 package org.italiangrid.utils.voms;
 
 import java.io.IOException;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
@@ -70,40 +69,6 @@ public class SecurityContextImpl implements SecurityContext {
 	 * The identified of the ssl session.
 	 */
 	private String sessionId;
-
-	/**
-	 * Thread local storage for locating the active security context.
-	 */
-	private static ThreadLocal<SecurityContextImpl> theSecurityContext = new ThreadLocal<SecurityContextImpl>();
-
-	/**
-	 * Get the security context associated with the current thread.
-	 * 
-	 * @return SecurityContext the SecurityContext associated with the current
-	 *         thread.
-	 */
-	public static SecurityContextImpl getCurrentContext() {
-		return theSecurityContext.get();
-	}
-
-	/**
-	 * Set the security context associated with the current thread.
-	 * 
-	 * @param sc
-	 *            the {@link SecurityContextImpl} associated with the current
-	 *            thread.
-	 */
-	public static void setCurrentContext(SecurityContextImpl sc) {
-		theSecurityContext.set(sc);
-	}
-
-	/**
-	 * Clears any set SecurityContext associated with the current thread. This
-	 * is identical to <code>SecurityContext.setCurrentContext(null)</code>.
-	 */
-	public static void clearCurrentContext() {
-		theSecurityContext.set(null);
-	}
 
 	/**
 	 * Set the client certificate. This method also automatically sets the

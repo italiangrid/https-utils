@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>https-utils</artifactId>
-  <version>0.3.1.rc0</version>
+  <version>0.3.1.rc1</version>
   <name>https-utils</name>
 
   <properties>

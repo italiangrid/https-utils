@@ -9,6 +9,7 @@ import org.italiangrid.utils.https.JettyShutdownTask;
 import org.italiangrid.utils.https.SSLOptions;
 import org.italiangrid.utils.https.ServerFactory;
 import org.italiangrid.utils.voms.VOMSSecurityContextHandler;
+import org.italiangrid.voms.VOMSValidators;
 
 /** 
  * A simple test server that demonstrates how to create an SSL-enabled server
@@ -32,7 +33,7 @@ public class TestServer {
 		
 		Server s = ServerFactory.newServer(hostname, port, options);
 		HandlerCollection handlers = new HandlerCollection();
-		handlers.setHandlers(new Handler[]{ new VOMSSecurityContextHandler(), 
+		handlers.setHandlers(new Handler[]{ new VOMSSecurityContextHandler(VOMSValidators.newValidator()), 
 				new PrintAuthenticationInformationHandler()});
 		
 		s.setHandler(handlers);
