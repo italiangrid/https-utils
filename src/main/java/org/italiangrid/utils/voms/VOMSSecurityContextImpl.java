@@ -1,5 +1,6 @@
 package org.italiangrid.utils.voms;
 
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.italiangrid.voms.VOMSAttribute;
@@ -20,6 +21,7 @@ implements VOMSSecurityContext{
 	
 	private final VOMSACValidator validator;
 	private final boolean secure;
+	private List<VOMSAttribute> vomsAttributes;
 	
 	public VOMSSecurityContextImpl(VOMSACValidator validator) {
 		this.validator = validator;
@@ -31,6 +33,15 @@ implements VOMSSecurityContext{
 		this.secure = secure;
 	}
 	
+	@Override
+	public void setClientCertChain(X509Certificate[] clientCertChain) {
+		super.setClientCertChain(clientCertChain);
+		if (!secure)
+			vomsAttributes = validator.parse(clientCertChain);
+		else
+			vomsAttributes = validator.validate(clientCertChain);
+	}
+
 	@Override
 	public VOMSACValidator getValidator() {
 		return validator;
@@ -45,10 +56,7 @@ implements VOMSSecurityContext{
 
 	@Override
 	public List<VOMSAttribute> getVOMSAttributes() {
-		if (!secure)
-			return validator.parse(getClientCertChain());
-		else
-			return validator.validate(getClientCertChain());
+		return vomsAttributes;
 	}
 
 	@Override
