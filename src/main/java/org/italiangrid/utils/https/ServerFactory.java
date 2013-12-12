@@ -1,12 +1,10 @@
 package org.italiangrid.utils.https;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.italiangrid.utils.https.impl.canl.CANLSSLConnectorConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,11 +56,14 @@ public class ServerFactory {
 		if (maxConnections <= 0)
 			maxConnections = MAX_CONNECTIONS;
 		
-		BlockingQueue<Runnable> requestQueue;
-
-		requestQueue = new ArrayBlockingQueue<Runnable>(maxRequestSize);
-		s.setThreadPool(new ExecutorThreadPool(5, maxConnections, 60,
-				TimeUnit.SECONDS, requestQueue));
+		QueuedThreadPool tp = new QueuedThreadPool();
+		
+		tp.setMinThreads(5);
+		tp.setMaxThreads(maxConnections);
+		tp.setMaxQueued(maxRequestSize);
+		tp.setMaxIdleTimeMs((int)TimeUnit.SECONDS.toMillis(60));
+		
+		s.setThreadPool(tp);
 	}
 	
 	/**

@@ -13,7 +13,6 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.italiangrid.voms.VOMSAttribute;
-import org.italiangrid.voms.VOMSValidators;
 import org.italiangrid.voms.ac.VOMSACValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +32,13 @@ public class VOMSSecurityContextHandler extends AbstractHandler implements Handl
 
 	public static final Logger log = LoggerFactory.getLogger(VOMSSecurityContextHandler.class);
 
+	private final VOMSACValidator validator;
 	
-	private VOMSACValidator validator;
+	private final boolean secure;
 	
-	public VOMSSecurityContextHandler(VOMSACValidator validator) {
+	public VOMSSecurityContextHandler(VOMSACValidator validator, boolean secure) {
 		this.validator = validator;
+		this.secure = secure;
 	}
 	
 	
@@ -46,7 +47,7 @@ public class VOMSSecurityContextHandler extends AbstractHandler implements Handl
 			throws IOException, ServletException {
 		
 		CurrentSecurityContext.clear();
-		VOMSSecurityContext sc = new VOMSSecurityContextImpl(validator);
+		VOMSSecurityContext sc = new VOMSSecurityContextImpl(validator, secure);
 		CurrentSecurityContext.set(sc);
 		
 		X509Certificate[] certChain = null;

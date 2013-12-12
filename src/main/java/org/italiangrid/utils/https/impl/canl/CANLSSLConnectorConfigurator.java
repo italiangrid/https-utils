@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import eu.emi.security.authn.x509.NamespaceCheckingMode;
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
-import eu.emi.security.authn.x509.impl.OpensslCertChainValidator;
 import eu.emi.security.authn.x509.impl.PEMCredential;
 import eu.emi.security.authn.x509.impl.SocketFactoryCreator;
 
@@ -57,7 +56,8 @@ public class CANLSSLConnectorConfigurator implements JettySSLConnectorConfigurat
 						.buildCertificateValidator(options.getTrustStoreDirectory(), 
 								l,
 								l,
-								options.getTrustStoreRefreshIntervalInMsec());
+								options.getTrustStoreRefreshIntervalInMsec(),
+								false);
 			}
 			
 			

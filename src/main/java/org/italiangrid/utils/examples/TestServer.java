@@ -1,15 +1,26 @@
 package org.italiangrid.utils.examples;
 
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.italiangrid.utils.https.JettyAdminService;
 import org.italiangrid.utils.https.JettyRunThread;
 import org.italiangrid.utils.https.JettyShutdownTask;
 import org.italiangrid.utils.https.SSLOptions;
 import org.italiangrid.utils.https.ServerFactory;
+import org.italiangrid.utils.https.impl.canl.CANLListener;
 import org.italiangrid.utils.voms.VOMSSecurityContextHandler;
 import org.italiangrid.voms.VOMSValidators;
+import org.italiangrid.voms.store.VOMSTrustStore;
+import org.italiangrid.voms.store.impl.DefaultVOMSTrustStore;
+import org.italiangrid.voms.util.CertificateValidatorBuilder;
+import org.italiangrid.voms.util.NullListener;
+
+import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 
 /** 
  * A simple test server that demonstrates how to create an SSL-enabled server
@@ -23,7 +34,8 @@ public class TestServer {
 			int port, 
 			String serverCertFile, 
 			String serverKeyFile,
-			String trustStoreDir) throws Exception {
+			String trustStoreDir,
+			boolean secure) throws Exception {
 		
 		
 		SSLOptions options = new SSLOptions();
@@ -31,33 +43,56 @@ public class TestServer {
 		options.setKeyFile(serverKeyFile);
 		options.setTrustStoreDirectory(trustStoreDir);
 		
-		Server s = ServerFactory.newServer(hostname, port, options);
+		
+		X509CertChainValidatorExt validator = 
+			CertificateValidatorBuilder.buildCertificateValidator(trustStoreDir, 
+				new CANLListener(), 
+				TimeUnit.MINUTES.toMillis(10), 
+				false);
+
+		VOMSTrustStore ts = new DefaultVOMSTrustStore();
+		
+		Server s = ServerFactory.newServer(hostname, port, options, validator, 
+			300, 500);
+		
 		HandlerCollection handlers = new HandlerCollection();
-		handlers.setHandlers(new Handler[]{ new VOMSSecurityContextHandler(VOMSValidators.newValidator()), 
-				new PrintAuthenticationInformationHandler()});
+		handlers.setHandlers(
+				new Handler[]{ 
+					new VOMSSecurityContextHandler(VOMSValidators.newValidator(ts, validator), 
+						secure), 
+					new DefaultHandler()
+				});
 		
 		s.setHandler(handlers);
 		
+		QueuedThreadPool tp = new QueuedThreadPool(300);
+		tp.setMaxQueued(500);
+		tp.setMinThreads(10);
+		
+		s.setThreadPool(tp);
+		
 		JettyRunThread rt = new JettyRunThread(s);
 		rt.start();
-		
-		JettyAdminService shutdownService = new JettyAdminService("localhost", port+1, "admin");
-		shutdownService.registerShutdownTask(new JettyShutdownTask(s));
-		
-		shutdownService.start();
 		
 	}
 	
 	public static void main(String[] args) throws Exception {
 		
-		if (args.length < 5){
-			
-			System.err.println("Please provide hostname,port,serverCert,serverKey,trustDir as arguments.");
-		}
+		String cert = System.getenv("X509_USER_CERT");
+		String key = System.getenv("X509_USER_KEY");
+		boolean secure = (System.getenv("HTTPS_UTILS_INSECURE") == null);
+		
+		if (cert == null)
+			cert = "/etc/grid-security/hostcert.pem";
+		
+		if (key == null)
+			key = "/etc/grid-security/hostkey.pem";
+		
+		String trustDir = "/etc/grid-security/certificates";
 		
 		String hostname = args[0];
 		int port = Integer.parseInt(args[1]);
-		new TestServer(hostname, port, args[2], args[3], args[4]);
+		new TestServer(hostname, port, cert, key, trustDir, secure);
 		
 	}
 }

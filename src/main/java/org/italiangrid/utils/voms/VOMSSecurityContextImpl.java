@@ -18,12 +18,18 @@ import org.italiangrid.voms.ac.VOMSValidationResult;
 public class VOMSSecurityContextImpl extends SecurityContextImpl 
 implements VOMSSecurityContext{
 	
-	private VOMSACValidator validator;
+	private final VOMSACValidator validator;
+	private final boolean secure;
 	
 	public VOMSSecurityContextImpl(VOMSACValidator validator) {
 		this.validator = validator;
+		secure = true;
 	}
 	
+	public VOMSSecurityContextImpl(VOMSACValidator validator, boolean secure) {
+		this.validator = validator;
+		this.secure = secure;
+	}
 	
 	@Override
 	public VOMSACValidator getValidator() {
@@ -32,12 +38,17 @@ implements VOMSSecurityContext{
 
 	@Override
 	public void setValidator(VOMSACValidator validator) {
-		this.validator = validator;
+		throw new UnsupportedOperationException(
+			"This implementation does not allow setting a validator after " +
+			"the context has been constructed.");
 	}
 
 	@Override
 	public List<VOMSAttribute> getVOMSAttributes() {
-		return validator.validate(getClientCertChain());
+		if (!secure)
+			return validator.parse(getClientCertChain());
+		else
+			return validator.validate(getClientCertChain());
 	}
 
 	@Override
