@@ -1,7 +1,6 @@
 package org.italiangrid.utils.examples;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
@@ -62,13 +60,15 @@ public class TestServer {
 		options.setKeyFile(serverKeyFile);
 		options.setTrustStoreDirectory(trustStoreDir);
 		
-		
+		CANLListener l = new CANLListener();
 		
 		X509CertChainValidatorExt validator = 
-			CertificateValidatorBuilder.buildCertificateValidator(trustStoreDir, 
-				new CANLListener(), 
-				TimeUnit.MINUTES.toMillis(10), 
-				false);
+			new CertificateValidatorBuilder()
+				.lazyAnchorsLoading(false)
+				.validationErrorListener(l)
+				.storeUpdateListener(l)
+				.trustAnchorsUpdateInterval(0L)
+				.build();
 
 		VOMSTrustStore ts = new DefaultVOMSTrustStore();
 		
