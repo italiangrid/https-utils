@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>https-utils</artifactId>
-  <version>0.3.2.rc1</version>
+  <version>0.3.2.rc2</version>
   <name>https-utils</name>
 
   <properties>
@@ -14,7 +14,7 @@
     <jettyVersion>8.1.9.v20130131</jettyVersion>
     <slf4jVersion>1.7.2</slf4jVersion>
     <logbackVersion>1.0.9</logbackVersion>
-    <vomsApiJavaVersion>3.0.3.rc0</vomsApiJavaVersion>
+    <vomsApiJavaVersion>3.0.3.rc1</vomsApiJavaVersion>
   </properties>
 
   <build>
