@@ -1,6 +1,8 @@
 Proxy certificate enabled HTTP server and Servlet container
 ===========================================================
 
+[![Build Status](https://travis-ci.org/italiangrid/https-utils.svg)](https://travis-ci.org/italiangrid/https-utils)
+
 Convenience library for getting a Jetty Server configured with an SSL
 connector that supports proxy certificates (http://www.ietf.org/rfc/rfc3820.txt).
 
