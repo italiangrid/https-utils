@@ -10,7 +10,9 @@ import org.italiangrid.voms.util.CertificateValidatorBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.emi.security.authn.x509.CrlCheckingMode;
 import eu.emi.security.authn.x509.NamespaceCheckingMode;
+import eu.emi.security.authn.x509.OCSPCheckingMode;
 import eu.emi.security.authn.x509.X509CertChainValidatorExt;
 import eu.emi.security.authn.x509.impl.PEMCredential;
 import eu.emi.security.authn.x509.impl.SocketFactoryCreator;
@@ -18,7 +20,7 @@ import eu.emi.security.authn.x509.impl.SocketFactoryCreator;
 /**
  * A {@link JettySSLConnectorConfigurator} that leverages the EMI Common
  * Authentication Library.
- * 
+ *
  * @author andreaceccanti
  *
  */
@@ -54,9 +56,14 @@ public class CANLSSLConnectorConfigurator implements
       if (certChainValidator == null) {
         CANLListener l = new CANLListener();
 
-        certChainValidator = CertificateValidatorBuilder
-          .buildCertificateValidator(options.getTrustStoreDirectory(), l, l,
-            options.getTrustStoreRefreshIntervalInMsec(), false);
+        certChainValidator = new CertificateValidatorBuilder()
+          .crlChecks(CrlCheckingMode.IF_VALID)
+          .ocspChecks(OCSPCheckingMode.IGNORE)
+          .lazyAnchorsLoading(false)
+          .trustAnchorsDir(options.getTrustStoreDirectory())
+          .trustAnchorsUpdateInterval(
+            options.getTrustStoreRefreshIntervalInMsec())
+          .storeUpdateListener(l).validationErrorListener(l).build();
       }
 
       SSLContext sslContext = SocketFactoryCreator.getSSLContext(

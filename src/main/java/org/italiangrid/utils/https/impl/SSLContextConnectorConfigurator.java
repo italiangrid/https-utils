@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link JettySSLConnectorConfigurator} that configures the connector
  * starting from a given {@link SSLContext}.
- * 
+ *
  * @author andreaceccanti
  *
  */
@@ -50,6 +50,7 @@ public class SSLContextConnectorConfigurator implements
       SslContextFactory factory = new SslContextFactory();
       factory.setSslContext(sslContext);
 
+      factory.setExcludeProtocols("SSLv3");
       factory.setWantClientAuth(options.isWantClientAuth());
       factory.setNeedClientAuth(options.isNeedClientAuth());
 
@@ -69,7 +70,7 @@ public class SSLContextConnectorConfigurator implements
 
   /**
    * Sets the SSL context for this configurator
-   * 
+   *
    * @param sslContext
    */
   public void setSslContext(SSLContext sslContext) {
@@ -79,7 +80,7 @@ public class SSLContextConnectorConfigurator implements
 
   /**
    * Returns the SSL context defined for this configurator
-   * 
+   *
    * @return the SSL context defined for this configurator
    */
   public SSLContext getSslContext() {
