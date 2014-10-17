@@ -27,47 +27,57 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Commands used to issue a set of tasks to be executed when a service is shut down. */
+/**
+ * Commands used to issue a set of tasks to be executed when a service is shut
+ * down.
+ */
 public class ShutdownCommand extends AbstractAdminCommand {
 
-    /** Serial version UID. */
-    private static final long serialVersionUID = 8098511780458295197L;
+  /** Serial version UID. */
+  private static final long serialVersionUID = 8098511780458295197L;
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ShutdownCommand.class);
+  /** Class logger. */
+  private final Logger log = LoggerFactory.getLogger(ShutdownCommand.class);
 
-    /** Background thread used to shut everything down. */
-    private Thread shutdownThread;
+  /** Background thread used to shut everything down. */
+  private Thread shutdownThread;
 
-    /**
-     * Constructor.
-     * 
-     * @param shutdownTasks tasks that must be executed, in order, when shutting the service down
-     */
-    public ShutdownCommand(final List<Runnable> shutdownTasks) {
-        super("shutdown");
+  /**
+   * Constructor.
+   * 
+   * @param shutdownTasks
+   *          tasks that must be executed, in order, when shutting the service
+   *          down
+   */
+  public ShutdownCommand(final List<Runnable> shutdownTasks) {
 
-        if (shutdownTasks == null || shutdownTasks.isEmpty()) {
-            return;
-        }
+    super("shutdown");
 
-        shutdownThread = new Thread() {
-            public void run() {
-                for (Runnable shutdownTask : shutdownTasks) {
-                    shutdownTask.run();
-                }
-            };
-        };
+    if (shutdownTasks == null || shutdownTasks.isEmpty()) {
+      return;
     }
 
-    /** {@inheritDoc} */
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.flushBuffer();
-        log.info("Service shutting down...");
-        if (shutdownThread != null) {
-            shutdownThread.start();
+    shutdownThread = new Thread() {
+
+      public void run() {
+
+        for (Runnable shutdownTask : shutdownTasks) {
+          shutdownTask.run();
         }
-        return;
+      };
+    };
+  }
+
+  /** {@inheritDoc} */
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    throws ServletException, IOException {
+
+    resp.setStatus(HttpServletResponse.SC_OK);
+    resp.flushBuffer();
+    log.info("Service shutting down...");
+    if (shutdownThread != null) {
+      shutdownThread.start();
     }
+    return;
+  }
 }

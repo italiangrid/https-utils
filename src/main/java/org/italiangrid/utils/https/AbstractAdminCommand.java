@@ -21,36 +21,43 @@ import javax.servlet.http.HttpServlet;
 
 import org.italiangrid.utils.collections.Strings;
 
-/** Base class for administration commands which may be registered with a {@link JettyAdminService}. */
+/**
+ * Base class for administration commands which may be registered with a
+ * {@link JettyAdminService}.
+ */
 public abstract class AbstractAdminCommand extends HttpServlet {
 
-    /** Serial version UID. */
-    private static final long serialVersionUID = 7219580728194810193L;
-    
-    /** URL path to the command. */
-    private String commandPath;
+  /** Serial version UID. */
+  private static final long serialVersionUID = 7219580728194810193L;
 
-    /**
-     * Constructor.
-     * 
-     * @param command name of the command, should only contain alphabetic characters
-     */
-    public AbstractAdminCommand(String command) {
-        commandPath = Strings.safeTrimOrNullString(command);
-        if (commandPath == null) {
-            throw new IllegalArgumentException("Command may not be a null or empty string");
-        }
-        if (!commandPath.startsWith("/")) {
-            commandPath = "/" + commandPath;
-        }
-    }
+  /** URL path to the command. */
+  private String commandPath;
 
-    /**
-     * Gets the URL path that invokes the command.
-     * 
-     * @return URL path that invokes the command
-     */
-    public String getCommandPath() {
-        return commandPath;
+  /**
+   * Constructor.
+   * 
+   * @param command
+   *          name of the command, should only contain alphabetic characters
+   */
+  public AbstractAdminCommand(String command) {
+
+    commandPath = Strings.safeTrimOrNullString(command);
+    if (commandPath == null) {
+      throw new IllegalArgumentException(
+        "Command may not be a null or empty string");
     }
+    if (!commandPath.startsWith("/")) {
+      commandPath = "/" + commandPath;
+    }
+  }
+
+  /**
+   * Gets the URL path that invokes the command.
+   * 
+   * @return URL path that invokes the command
+   */
+  public String getCommandPath() {
+
+    return commandPath;
+  }
 }

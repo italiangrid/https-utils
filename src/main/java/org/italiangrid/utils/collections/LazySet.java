@@ -29,127 +29,146 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * A set that is lazy initialized. This set takes very little memory when storing zero or one item.
+ * A set that is lazy initialized. This set takes very little memory when
+ * storing zero or one item.
  * 
- * @param <ElementType> type of the elements within the set
+ * @param <ElementType>
+ *          type of the elements within the set
  */
 
 public class LazySet<ElementType> implements Set<ElementType>, Serializable {
 
-    /** Serial version UID. */
-    private static final long serialVersionUID = -1596445680460115174L;
+  /** Serial version UID. */
+  private static final long serialVersionUID = -1596445680460115174L;
 
-    /** The delegate set. */
-    private Set<ElementType> delegate = Collections.emptySet();
+  /** The delegate set. */
+  private Set<ElementType> delegate = Collections.emptySet();
 
-    /** {@inheritDoc} */
-    public boolean add(ElementType element) {
-        if (delegate.isEmpty()) {
-            delegate = Collections.singleton(element);
-            return true;
-        } else {
-            delegate = createImplementation();
-            return delegate.add(element);
-        }
+  /** {@inheritDoc} */
+  public boolean add(ElementType element) {
+
+    if (delegate.isEmpty()) {
+      delegate = Collections.singleton(element);
+      return true;
+    } else {
+      delegate = createImplementation();
+      return delegate.add(element);
+    }
+  }
+
+  /** {@inheritDoc} */
+  public boolean addAll(Collection<? extends ElementType> collection) {
+
+    delegate = createImplementation();
+    return delegate.addAll(collection);
+  }
+
+  /** {@inheritDoc} */
+  public void clear() {
+
+    delegate = Collections.emptySet();
+  }
+
+  /** {@inheritDoc} */
+  public boolean contains(Object element) {
+
+    return delegate.contains(element);
+  }
+
+  /** {@inheritDoc} */
+  public boolean containsAll(Collection<?> collection) {
+
+    return delegate.containsAll(collection);
+  }
+
+  /** {@inheritDoc} */
+  public boolean isEmpty() {
+
+    return delegate.isEmpty();
+  }
+
+  /** {@inheritDoc} */
+  public Iterator<ElementType> iterator() {
+
+    return delegate.iterator();
+  }
+
+  /** {@inheritDoc} */
+  public boolean remove(Object element) {
+
+    delegate = createImplementation();
+    return delegate.remove(element);
+  }
+
+  /** {@inheritDoc} */
+  public boolean removeAll(Collection<?> collection) {
+
+    delegate = createImplementation();
+    return delegate.removeAll(collection);
+  }
+
+  /** {@inheritDoc} */
+  public boolean retainAll(Collection<?> collection) {
+
+    delegate = createImplementation();
+    return delegate.retainAll(collection);
+  }
+
+  /** {@inheritDoc} */
+  public int size() {
+
+    return delegate.size();
+  }
+
+  /** {@inheritDoc} */
+  public Object[] toArray() {
+
+    return delegate.toArray();
+  }
+
+  /** {@inheritDoc} */
+  public <T> T[] toArray(T[] type) {
+
+    return delegate.toArray(type);
+  }
+
+  /**
+   * Builds an appropriate delegate set.
+   * 
+   * @return the delegate set
+   */
+  private Set<ElementType> createImplementation() {
+
+    if (delegate instanceof HashSet) {
+      return delegate;
     }
 
-    /** {@inheritDoc} */
-    public boolean addAll(Collection<? extends ElementType> collection) {
-        delegate = createImplementation();
-        return delegate.addAll(collection);
+    return new HashSet<ElementType>(delegate);
+  }
+
+  /** {@inheritDoc} */
+  public String toString() {
+
+    return delegate.toString();
+  }
+
+  /** {@inheritDoc} */
+  public int hashCode() {
+
+    return delegate.hashCode();
+  }
+
+  /** {@inheritDoc} */
+  public boolean equals(Object obj) {
+
+    if (this == obj) {
+      return true;
     }
 
-    /** {@inheritDoc} */
-    public void clear() {
-        delegate = Collections.emptySet();
+    if (obj == null || this.getClass() != obj.getClass()) {
+      return false;
     }
 
-    /** {@inheritDoc} */
-    public boolean contains(Object element) {
-        return delegate.contains(element);
-    }
-
-    /** {@inheritDoc} */
-    public boolean containsAll(Collection<?> collection) {
-        return delegate.containsAll(collection);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isEmpty() {
-        return delegate.isEmpty();
-    }
-
-    /** {@inheritDoc} */
-    public Iterator<ElementType> iterator() {
-        return delegate.iterator();
-    }
-
-    /** {@inheritDoc} */
-    public boolean remove(Object element) {
-        delegate = createImplementation();
-        return delegate.remove(element);
-    }
-
-    /** {@inheritDoc} */
-    public boolean removeAll(Collection<?> collection) {
-        delegate = createImplementation();
-        return delegate.removeAll(collection);
-    }
-
-    /** {@inheritDoc} */
-    public boolean retainAll(Collection<?> collection) {
-        delegate = createImplementation();
-        return delegate.retainAll(collection);
-    }
-
-    /** {@inheritDoc} */
-    public int size() {
-        return delegate.size();
-    }
-
-    /** {@inheritDoc} */
-    public Object[] toArray() {
-        return delegate.toArray();
-    }
-
-    /** {@inheritDoc} */
-    public <T> T[] toArray(T[] type) {
-        return delegate.toArray(type);
-    }
-
-    /**
-     * Builds an appropriate delegate set.
-     * 
-     * @return the delegate set
-     */
-    private Set<ElementType> createImplementation() {
-        if (delegate instanceof HashSet) {
-            return delegate;
-        }
-
-        return new HashSet<ElementType>(delegate);
-    }
-    
-    /** {@inheritDoc} */
-    public String toString() {
-        return delegate.toString();
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return delegate.hashCode();
-    }
-
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null || this.getClass() != obj.getClass()) {
-            return false;
-        }
-
-        return delegate.equals(((LazySet<?>) obj).delegate);
-    }
+    return delegate.equals(((LazySet<?>) obj).delegate);
+  }
 }

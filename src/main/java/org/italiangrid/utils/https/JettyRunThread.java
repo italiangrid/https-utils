@@ -28,28 +28,31 @@ import org.slf4j.LoggerFactory;
 /** A thread that spawns a Jetty {@link Server} instance. */
 public class JettyRunThread extends Thread {
 
-    /** Jetty server to start. */
-    private Server httpServer;
+  /** Jetty server to start. */
+  private Server httpServer;
 
-    /**
-     * Constructor.
-     * 
-     * @param server Jetty server to start
-     */
-    public JettyRunThread(Server server) {
-        httpServer = server;
-    }
+  /**
+   * Constructor.
+   * 
+   * @param server
+   *          Jetty server to start
+   */
+  public JettyRunThread(Server server) {
 
-    /** {@inheritDoc} */
-    public void run() {
-        try {
-            httpServer.start();
-            httpServer.join();
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(JettyRunThread.class);
-            log.error("Unable to start service, shutting down", e);
-            e.printStackTrace();
-            System.exit(1);
-        }
+    httpServer = server;
+  }
+
+  /** {@inheritDoc} */
+  public void run() {
+
+    try {
+      httpServer.start();
+      httpServer.join();
+    } catch (Exception e) {
+      Logger log = LoggerFactory.getLogger(JettyRunThread.class);
+      log.error("Unable to start service, shutting down", e);
+      e.printStackTrace();
+      System.exit(1);
     }
+  }
 }

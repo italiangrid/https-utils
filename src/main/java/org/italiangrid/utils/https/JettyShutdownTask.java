@@ -21,46 +21,47 @@
  */
 package org.italiangrid.utils.https;
 
-
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 
- * A command that shuts down a Jetty {@link Server} if it's currently running, and calls System.exit() right after.
+ * A command that shuts down a Jetty {@link Server} if it's currently running,
+ * and calls System.exit() right after.
  * 
  */
 public class JettyShutdownTask implements Runnable {
 
-	public static final Logger log = LoggerFactory
-			.getLogger(JettyShutdownTask.class);
+  public static final Logger log = LoggerFactory
+    .getLogger(JettyShutdownTask.class);
 
-	private Server httpServer;
+  private Server httpServer;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param s
-	 *            the server to be shut down
-	 */
-	public JettyShutdownTask(Server s) {
-		httpServer = s;
-	}
+  /**
+   * Constructor.
+   * 
+   * @param s
+   *          the server to be shut down
+   */
+  public JettyShutdownTask(Server s) {
 
-	public void run() {
+    httpServer = s;
+  }
 
-		if (httpServer.isRunning()) {
-			try {
-				httpServer.stop();
-				if (httpServer.isStopped()) {
-					log.info("Server stopped.");
-					System.exit(0);
-				}
-			} catch (Exception e) {
-				log.error("Unable to shutdown HTTP server", e);
-				System.exit(1);
-			}
-		}
-	}
+  public void run() {
+
+    if (httpServer.isRunning()) {
+      try {
+        httpServer.stop();
+        if (httpServer.isStopped()) {
+          log.info("Server stopped.");
+          System.exit(0);
+        }
+      } catch (Exception e) {
+        log.error("Unable to shutdown HTTP server", e);
+        System.exit(1);
+      }
+    }
+  }
 }

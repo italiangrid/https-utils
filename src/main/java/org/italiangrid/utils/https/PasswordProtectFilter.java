@@ -31,42 +31,47 @@ import org.italiangrid.utils.collections.Strings;
 
 /** A simple filter that password protects a request. */
 public class PasswordProtectFilter implements Filter {
-    
-    /** HTTP request parameter that carries the password. */
-    public static final String PASSWORD_PARAM_NAME = "password";
-    
-    /** The expected request password. */
-    private final String requestPassword;
 
-    /**
-     * Constructor.
-     * 
-     * @param password the request password
-     */
-    public PasswordProtectFilter(String password){
-        requestPassword = Strings.safeTrimOrNullString(password);
-    }
-    
-    /** {@inheritDoc} */
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-            ServletException {
-        String password = Strings.safeTrimOrNullString(request.getParameter(PASSWORD_PARAM_NAME));
-        
-        if(requestPassword != null && !requestPassword.equals(password)){
-            ((HttpServletResponse)response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-        
-        chain.doFilter(request, response);
+  /** HTTP request parameter that carries the password. */
+  public static final String PASSWORD_PARAM_NAME = "password";
+
+  /** The expected request password. */
+  private final String requestPassword;
+
+  /**
+   * Constructor.
+   * 
+   * @param password
+   *          the request password
+   */
+  public PasswordProtectFilter(String password) {
+
+    requestPassword = Strings.safeTrimOrNullString(password);
+  }
+
+  /** {@inheritDoc} */
+  public void doFilter(ServletRequest request, ServletResponse response,
+    FilterChain chain) throws IOException, ServletException {
+
+    String password = Strings.safeTrimOrNullString(request
+      .getParameter(PASSWORD_PARAM_NAME));
+
+    if (requestPassword != null && !requestPassword.equals(password)) {
+      ((HttpServletResponse) response)
+        .setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
     }
 
-    /** {@inheritDoc} */
-    public void init(FilterConfig filterConfig) throws ServletException {
-        
-    }
-    
-    /** {@inheritDoc} */
-    public void destroy() {
-        
-    }
+    chain.doFilter(request, response);
+  }
+
+  /** {@inheritDoc} */
+  public void init(FilterConfig filterConfig) throws ServletException {
+
+  }
+
+  /** {@inheritDoc} */
+  public void destroy() {
+
+  }
 }

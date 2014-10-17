@@ -24,34 +24,34 @@ import org.italiangrid.voms.VOMSAttribute;
  */
 public class PrintAuthenticationInformationHandler extends AbstractHandler {
 
-	public void handle(String target, Request baseRequest,
-		HttpServletRequest request, HttpServletResponse response)
-		throws IOException, ServletException {
+  public void handle(String target, Request baseRequest,
+    HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException {
 
-		response.setContentType("text/html;charset=utf-8");
-		response.setStatus(HttpServletResponse.SC_OK);
-		baseRequest.setHandled(true);
-		VOMSSecurityContext sc = (VOMSSecurityContext) CurrentSecurityContext.get();
+    response.setContentType("text/html;charset=utf-8");
+    response.setStatus(HttpServletResponse.SC_OK);
+    baseRequest.setHandled(true);
+    VOMSSecurityContext sc = (VOMSSecurityContext) CurrentSecurityContext.get();
 
-		response.getWriter().println("<h1>Hello!</h1>");
-		BigInteger sn = sc.getClientCert().getSerialNumber();
+    response.getWriter().println("<h1>Hello!</h1>");
+    BigInteger sn = sc.getClientCert().getSerialNumber();
 
-		String serialNumber = (sn == null) ? "NULL" : sn.toString();
+    String serialNumber = (sn == null) ? "NULL" : sn.toString();
 
-		List<VOMSAttribute> vomsAttributes = sc.getVOMSAttributes();
+    List<VOMSAttribute> vomsAttributes = sc.getVOMSAttributes();
 
-		String vomsAttrsString = "No valid VOMS attributes found.";
+    String vomsAttrsString = "No valid VOMS attributes found.";
 
-		if (vomsAttributes.size() > 0)
-			vomsAttrsString = String.format("VOMS attributes: %s .", vomsAttributes);
+    if (vomsAttributes.size() > 0)
+      vomsAttrsString = String.format("VOMS attributes: %s .", vomsAttributes);
 
-		String connectionMessage = String.format(
-			"Connection from '%s' by '%s' (issued by '%s') serial: %s. %s",
-			request.getRemoteAddr(), sc.getClientX500Name(), sc.getIssuerX500Name(),
-			serialNumber, vomsAttrsString);
+    String connectionMessage = String.format(
+      "Connection from '%s' by '%s' (issued by '%s') serial: %s. %s",
+      request.getRemoteAddr(), sc.getClientX500Name(), sc.getIssuerX500Name(),
+      serialNumber, vomsAttrsString);
 
-		response.getWriter().println(connectionMessage);
+    response.getWriter().println(connectionMessage);
 
-	}
+  }
 
 }
