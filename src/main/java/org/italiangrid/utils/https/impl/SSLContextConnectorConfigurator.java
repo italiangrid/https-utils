@@ -37,6 +37,15 @@ public class SSLContextConnectorConfigurator implements
 
     sslContext = ctxt;
   }
+  
+  private String arrayToString(String[] sArray){
+    
+    if (sArray == null){
+      return "null";
+    }
+    
+    return Arrays.toString(sArray);
+  }
 
   public void logSSLContextFactoryConfig(SslContextFactory factory) {
 
@@ -53,16 +62,16 @@ public class SSLContextConnectorConfigurator implements
       log.debug("needClientAuth: {}", factory.getNeedClientAuth());
 
       log.debug("includeProtocols: {}",
-        Arrays.toString(factory.getIncludeProtocols()));
+        arrayToString(factory.getIncludeProtocols()));
 
       log.debug("excludeProtocols: {}",
-        Arrays.toString(factory.getExcludeProtocols()));
+        arrayToString(factory.getExcludeProtocols()));
 
       log.debug("includeCipherSuites: {}",
-        Arrays.toString(factory.getIncludeCipherSuites()));
+        arrayToString(factory.getIncludeCipherSuites()));
 
       log.debug("excludeCipherSuites: {}",
-        Arrays.toString(factory.getExcludeCipherSuites()));
+        arrayToString(factory.getExcludeCipherSuites()));
 
       log.debug("## End of SSL Configuration parameters ##");
     }
