@@ -1,5 +1,9 @@
 package org.italiangrid.utils.https;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * This class provides a container for a set of commonly used SSL connector
  * configuration options.
@@ -43,6 +47,12 @@ public final class SSLOptions {
   private long trustStoreRefreshIntervalInMsec = DEFAULT_TRUST_STORE_REFRESH_INTERVAL_IN_MSECS;
   private boolean wantClientAuth = true;
   private boolean needClientAuth = true;
+
+  private Set<String> includeProtocols;
+  private Set<String> excludeProtocols;
+
+  private Set<String> includeCipherSuites;
+  private Set<String> excludeCipherSuites;
 
   public SSLOptions() {
 
@@ -117,5 +127,61 @@ public final class SSLOptions {
   public void setKeyPassword(char[] keyPassword) {
 
     this.keyPassword = keyPassword;
+  }
+
+  public void setIncludeProtocols(String... protocols) {
+
+    includeProtocols = new LinkedHashSet<String>(Arrays.asList(protocols));
+  }
+
+  public String[] getIncludeProtocols() {
+
+    if (includeProtocols == null) {
+      return null;
+    }
+
+    return includeProtocols.toArray(new String[includeProtocols.size()]);
+  }
+
+  public void setExcludeProtocols(String... protocols) {
+
+    excludeProtocols = new LinkedHashSet<String>(Arrays.asList(protocols));
+  }
+
+  public String[] getExcludeProtocols() {
+
+    if (excludeProtocols == null) {
+      return null;
+    }
+
+    return excludeProtocols.toArray(new String[excludeProtocols.size()]);
+  }
+
+  public void setIncludeCipherSuites(String... cipherSuites) {
+
+    includeCipherSuites = new LinkedHashSet<String>(Arrays.asList(cipherSuites));
+  }
+
+  public String[] getIncludeCipherSuites() {
+
+    if (includeCipherSuites == null) {
+      return null;
+    }
+
+    return includeCipherSuites.toArray(new String[includeCipherSuites.size()]);
+  }
+
+  public void setExcludeCipherSuites(String... cipherSuites) {
+
+    excludeCipherSuites = new LinkedHashSet<String>(Arrays.asList(cipherSuites));
+  }
+
+  public String[] getExcludeCipherSuites() {
+
+    if (excludeCipherSuites == null) {
+      return null;
+    }
+
+    return excludeCipherSuites.toArray(new String[excludeCipherSuites.size()]);
   }
 }

@@ -48,9 +48,29 @@ public class SSLContextConnectorConfigurator implements
     try {
 
       SslContextFactory factory = new SslContextFactory();
+
       factory.setSslContext(sslContext);
 
-      factory.setExcludeProtocols("SSLv3");
+      if (options.getExcludeProtocols() != null) {
+
+        factory.setExcludeProtocols(options.getExcludeProtocols());
+      }
+
+      if (options.getIncludeProtocols() != null) {
+
+        factory.setIncludeProtocols(options.getIncludeProtocols());
+      }
+
+      if (options.getIncludeCipherSuites() != null) {
+
+        factory.setIncludeCipherSuites(options.getIncludeCipherSuites());
+      }
+
+      if (options.getExcludeCipherSuites() != null) {
+
+        factory.setExcludeCipherSuites(options.getExcludeCipherSuites());
+      }
+
       factory.setWantClientAuth(options.isWantClientAuth());
       factory.setNeedClientAuth(options.isNeedClientAuth());
 
