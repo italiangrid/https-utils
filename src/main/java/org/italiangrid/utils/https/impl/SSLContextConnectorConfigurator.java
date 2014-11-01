@@ -38,20 +38,12 @@ public class SSLContextConnectorConfigurator implements
     sslContext = ctxt;
   }
   
-  private String arrayToString(String[] sArray){
-    
-    if (sArray == null){
-      return "null";
-    }
-    
-    return Arrays.toString(sArray);
-  }
 
   public void logSSLContextFactoryConfig(SslContextFactory factory) {
 
     if (log.isDebugEnabled()) {
 
-      log.debug("## SSL Configuration parameters ##");
+      log.debug("## SSL Context factory configuration ##");
 
       log.debug("provider: {}", factory.getProvider());
 
@@ -61,19 +53,16 @@ public class SSLContextConnectorConfigurator implements
 
       log.debug("needClientAuth: {}", factory.getNeedClientAuth());
 
-      log.debug("includeProtocols: {}",
-        arrayToString(factory.getIncludeProtocols()));
-
+      // Jetty strangely does not initialize includeProtocols and
+      // includeCipherSuites, so we can get a null pointer exception
+      // here if we do a get on those fields.
       log.debug("excludeProtocols: {}",
-        arrayToString(factory.getExcludeProtocols()));
-
-      log.debug("includeCipherSuites: {}",
-        arrayToString(factory.getIncludeCipherSuites()));
+        Arrays.toString(factory.getExcludeProtocols()));
 
       log.debug("excludeCipherSuites: {}",
-        arrayToString(factory.getExcludeCipherSuites()));
+        Arrays.toString(factory.getExcludeCipherSuites()));
 
-      log.debug("## End of SSL Configuration parameters ##");
+      log.debug("## End of SSL Context factory configuration ##");
     }
 
   }

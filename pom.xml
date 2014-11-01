@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.italiangrid</groupId>
   <artifactId>https-utils</artifactId>
-  <version>0.3.5.rc0</version>
+  <version>0.3.5.rc1</version>
   <name>https-utils</name>
 
   <properties>
@@ -15,8 +15,10 @@
     <slf4jVersion>1.7.2</slf4jVersion>
     <logbackVersion>1.0.9</logbackVersion>
     <vomsApiJavaVersion>3.0.4</vomsApiJavaVersion>
-    
+
     <plugin.compiler.version>3.1</plugin.compiler.version>
+    <plugin.javadoc.version>2.9.1</plugin.javadoc.version>
+    <plugin.source.version>2.2.1</plugin.source.version>
   </properties>
 
   <build>
@@ -29,6 +31,37 @@
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${plugin.javadoc.version}</version>
+        <configuration>
+          <outputDirectory>${project.build.directory}/javadoc</outputDirectory>
+          <reportOutputDirectory>${project.reporting.outputDirectory}/javadoc</reportOutputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${plugin.source.version}</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -72,14 +105,14 @@
   </dependencies>
   <distributionManagement>
     <repository>
-        <id>cnaf-releases</id>
-        <name>CNAF releases</name>
-        <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-releases/</url>
+      <id>cnaf-releases</id>
+      <name>CNAF releases</name>
+      <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-releases/</url>
     </repository>
     <snapshotRepository>
-        <id>cnaf-snapshots</id>
-        <name>CNAF snapshots</name>
-        <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-snapshots/</url>
+      <id>cnaf-snapshots</id>
+      <name>CNAF snapshots</name>
+      <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 </project>
