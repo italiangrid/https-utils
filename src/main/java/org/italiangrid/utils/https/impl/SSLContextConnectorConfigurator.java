@@ -1,5 +1,7 @@
 package org.italiangrid.utils.https.impl;
 
+import java.util.Arrays;
+
 import javax.net.ssl.SSLContext;
 
 import org.eclipse.jetty.server.Connector;
@@ -34,6 +36,37 @@ public class SSLContextConnectorConfigurator implements
   public SSLContextConnectorConfigurator(SSLContext ctxt) {
 
     sslContext = ctxt;
+  }
+
+  public void logSSLContextFactoryConfig(SslContextFactory factory) {
+
+    if (log.isDebugEnabled()) {
+
+      log.debug("## SSL Configuration parameters ##");
+
+      log.debug("provider: {}", factory.getProvider());
+
+      log.debug("protocol: {}", factory.getProtocol());
+
+      log.debug("wantClientAuth: {}", factory.getWantClientAuth());
+
+      log.debug("needClientAuth: {}", factory.getNeedClientAuth());
+
+      log.debug("includeProtocols: {}",
+        Arrays.toString(factory.getIncludeProtocols()));
+
+      log.debug("excludeProtocols: {}",
+        Arrays.toString(factory.getExcludeProtocols()));
+
+      log.debug("includeCipherSuites: {}",
+        Arrays.toString(factory.getIncludeCipherSuites()));
+
+      log.debug("excludeCipherSuites: {}",
+        Arrays.toString(factory.getExcludeCipherSuites()));
+
+      log.debug("## End of SSL Configuration parameters ##");
+    }
+
   }
 
   public Connector configureConnector(String host, int port, SSLOptions options) {
@@ -73,6 +106,8 @@ public class SSLContextConnectorConfigurator implements
 
       factory.setWantClientAuth(options.isWantClientAuth());
       factory.setNeedClientAuth(options.isNeedClientAuth());
+
+      logSSLContextFactoryConfig(factory);
 
       connector = new SslSelectChannelConnector(factory);
       connector.setHost(host);
