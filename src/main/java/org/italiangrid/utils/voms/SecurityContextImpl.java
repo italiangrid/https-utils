@@ -117,7 +117,7 @@ public class SecurityContextImpl implements SecurityContext {
    * 
    * @return X509Certificate The identity certificate of the authenticated
    *         client
-   * @see #CLIENT_NAME
+   * 
    * @see #setClientCert(X509Certificate)
    */
   public X509Certificate getClientCert() {
@@ -142,7 +142,7 @@ public class SecurityContextImpl implements SecurityContext {
    * representation of the name.
    * 
    * @return String The name of the authenticated client
-   * @see #CLIENT_X500_NAME
+   * 
    * @see #setClientX500Name(String)
    */
   public String getClientX500Name() {
@@ -172,8 +172,8 @@ public class SecurityContextImpl implements SecurityContext {
   }
 
   /**
-   * @param clientName
-   *          The name of the authenticated client
+   * @param issuerName
+   *          the issuer name
    */
   public void setIssuerX500Name(String issuerName) {
 
@@ -267,7 +267,7 @@ public class SecurityContextImpl implements SecurityContext {
   }
 
   /**
-   * @param the
+   * @param sessionId
    *          SSL session ID used for this connection.
    */
   public void setSessionId(String sessionId) {

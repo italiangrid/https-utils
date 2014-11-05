@@ -70,7 +70,7 @@ public interface VOMSSecurityContext extends SecurityContext {
    * Returns the validator used for extracting and validating VOMS Attributes
    * from the client cert chain.
    * 
-   * @return
+   * @return a {@link VOMSACValidator}
    */
   public VOMSACValidator getValidator();
 
