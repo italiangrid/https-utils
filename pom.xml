@@ -2,27 +2,103 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.italiangrid</groupId>
   <artifactId>https-utils</artifactId>
   <version>0.3.5.rc1</version>
+  <packaging>jar</packaging>
+
   <name>https-utils</name>
+  <description>HTTP server security utilities for VOMS proxy support</description>
+
+  <url>https://github.com/italiangrid/https-utils</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/italiangrid/https-utils</url>
+    <connection>scm:git:git://github.com/italiangrid/https-utils.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:italiangrid/https-utils.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>andreac</id>
+      <name>Andrea Ceccanti</name>
+      <email>andrea.ceccanti@cnaf.infn.it</email>
+      <organization>INFN CNAF</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>vventuri</id>
+      <name>Valerio Venturi</name>
+      <email>valerio.venturi@cnaf.infn.it</email>
+      <organization>INFN CNAF</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <jettyVersion>8.1.9.v20130131</jettyVersion>
-    <slf4jVersion>1.7.2</slf4jVersion>
-    <logbackVersion>1.0.9</logbackVersion>
-    <vomsApiJavaVersion>3.0.4</vomsApiJavaVersion>
+    <jetty.version>8.1.9.v20130131</jetty.version>
+    <slf4j.version>1.7.2</slf4j.version>
+    <logback.version>1.0.9</logback.version>
+    <voms-api-java.version>3.0.4</voms-api-java.version>
 
     <plugin.compiler.version>3.1</plugin.compiler.version>
     <plugin.javadoc.version>2.9.1</plugin.javadoc.version>
     <plugin.source.version>2.2.1</plugin.source.version>
+    <plugin.gpg.version>1.5</plugin.gpg.version>
+    <plugin.release.version>2.2.2</plugin.release.version>
+    <plugin.deploy.version>2.8.2</plugin.deploy.version>
+    <plugin.nexus-staging.version>1.6.3</plugin.nexus-staging.version>
+    <plugin.license.version>1.9.0</plugin.license.version>
   </properties>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <version>${plugin.license.version}</version>
+        <configuration>
+          <header>src/license/license.txt</header>
+          <excludes>
+            <exclude>.travis.yml</exclude>
+            <exclude>*.md</exclude>
+            <exclude>AUTHORS</exclude>
+            <exclude>LICENSE</exclude>
+            <exclude>.gitignore</exclude>
+            <exclude>certs/**</exclude>
+            <exclude>src/test/resources/**</exclude>
+            <exclude>src/config/**</exclude>
+          </excludes>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <strictCheck>true</strictCheck>
+        </configuration>
+        <executions>
+          <execution>
+            <id>check-headers</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -63,33 +139,49 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${plugin.release.version}</version>
+        <configuration>
+          <mavenExecutorId>forked-path</mavenExecutorId>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>${plugin.deploy.version}</version>
+      </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>${logbackVersion}</version>
+      <version>${logback.version}</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>${logbackVersion}</version>
+      <version>${logback.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty.aggregate</groupId>
       <artifactId>jetty-all-server</artifactId>
-      <version>${jettyVersion}</version>
+      <version>${jetty.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4jVersion}</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>log4j-over-slf4j</artifactId>
-      <version>${slf4jVersion}</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -100,19 +192,95 @@
     <dependency>
       <groupId>org.italiangrid</groupId>
       <artifactId>voms-api-java</artifactId>
-      <version>${vomsApiJavaVersion}</version>
+      <version>${voms-api-java.version}</version>
     </dependency>
   </dependencies>
-  <distributionManagement>
-    <repository>
-      <id>cnaf-releases</id>
-      <name>CNAF releases</name>
-      <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>cnaf-snapshots</id>
-      <name>CNAF snapshots</name>
-      <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
+  <profiles>
+
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${plugin.gpg.version}</version>
+            <configuration>
+              <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>local-staging</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <distributionManagement>
+        <repository>
+          <id>cnaf-releases</id>
+          <name>CNAF releases</name>
+          <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-releases/</url>
+        </repository>
+
+        <snapshotRepository>
+          <id>cnaf-snapshots</id>
+          <name>CNAF snapshots</name>
+          <url>http://radiohead.cnaf.infn.it:8081/nexus/content/repositories/cnaf-snapshots/</url>
+        </snapshotRepository>
+
+      </distributionManagement>
+    </profile>
+
+    <profile>
+      <id>central-staging</id>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>ossrh</id>
+          <name>Maven central snapshots</name>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+
+        <repository>
+          <id>ossrh</id>
+          <name>Maven central releases</name>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+      </distributionManagement>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>${plugin.nexus-staging.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

@@ -1,6 +1,5 @@
-/*
- * Copyright (c) Members of the EGEE Collaboration. 2006-2010.
- * See http://www.eu-egee.org/partners/ for details on the copyright holders.
+/**
+ * Copyright (c) Istituto Nazionale di Fisica Nucleare, 2006-2014.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.italiangrid.utils.https;
 
 import java.io.IOException;
