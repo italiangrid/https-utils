@@ -58,7 +58,8 @@ public class ConnectionTest {
 	 * Set up the testing environment. Start the server and let it listen
 	 * waiting for test calls.
 	 * 
-	 * @throws Exception
+	 * @throws Exception in case of errors
+	 * 
 	 */
 
 	@Before
@@ -94,7 +95,7 @@ public class ConnectionTest {
 	/**
 	 * Connect using HTTP throws an ssl handshake exception.
 	 * 
-	 * @throws IOException
+	 * @throws IOException in case of errors
 	 */
 	@Test(expected = SSLHandshakeException.class)
 	public void unsecureConnection() throws IOException {
@@ -109,6 +110,12 @@ public class ConnectionTest {
 
 	/**
 	 * Connect using a certificate released from a trusted CA.
+	 * @throws IOException in case of errors
+	 * @throws KeyStoreException in case of errors
+	 * @throws NoSuchAlgorithmException in case of errors
+	 * @throws CertificateException in case of errors
+	 * @throws KeyManagementException in case of errors
+	 * @throws UnrecoverableKeyException in case of errors
 	 * 
 	 */
 	@Test
@@ -163,7 +170,7 @@ public class ConnectionTest {
 	/**
 	 * Tear down the testing environment. Stop the server.
 	 * 
-	 * @throws Exception
+	 * @throws Exception in case of errors
 	 */
 	@After
 	public void tearDown() throws Exception {

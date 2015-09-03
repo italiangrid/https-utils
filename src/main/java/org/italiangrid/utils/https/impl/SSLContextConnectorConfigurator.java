@@ -139,7 +139,7 @@ public class SSLContextConnectorConfigurator implements
   /**
    * Sets the SSL context for this configurator
    *
-   * @param sslContext
+   * @param sslContext the ssl context
    */
   public void setSslContext(SSLContext sslContext) {
 

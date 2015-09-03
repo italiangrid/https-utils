@@ -88,8 +88,8 @@ public class ServerFactory {
    * Returns a new Jetty server configured to listen on the host:port passed as
    * argument using the SSL default options (see {@link SSLOptions}).
    * 
-   * @param host
-   * @param port
+   * @param host the host
+   * @param port the port
    * @return a {@link Server} configured as requested
    */
   public static Server newServer(String host, int port) {
@@ -103,9 +103,9 @@ public class ServerFactory {
    * Returns a new Jetty server configured to listen on the host:port passed as
    * argument and according to the SSL configuration options provided.
    * 
-   * @param host
-   * @param port
-   * @param options
+   * @param host the host 
+   * @param port the port
+   * @param options the ssl options
    * @return a {@link Server} configured as requested
    */
   public static Server newServer(String host, int port, SSLOptions options) {
@@ -131,10 +131,12 @@ public class ServerFactory {
    * Returns a new Jetty server configured to listen on the host:port passed as
    * argument and according to the SSL configuration options provided.
    * 
-   * @param host
-   * @param port
-   * @param options
-   * @param validator
+   * @param host the host 
+   * @param port the port
+   * @param options the ssl options
+   * @param validator the CANL validator
+   * @param maxConnections the maximun number of served connections
+   * @param maxRequestQueueSize the request backlog size
    * @return a {@link Server} configured as requested
    */
   public static Server newServer(String host, int port, SSLOptions options,
