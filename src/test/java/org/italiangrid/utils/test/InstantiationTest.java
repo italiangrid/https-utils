@@ -15,6 +15,9 @@
  */
 package org.italiangrid.utils.test;
 
+import junit.framework.Assert;
+
+import org.eclipse.jetty.server.Server;
 import org.italiangrid.utils.https.SSLOptions;
 import org.italiangrid.utils.https.ServerFactory;
 import org.junit.Test;
@@ -27,57 +30,61 @@ import org.junit.Test;
  */
 public class InstantiationTest {
 
-	/**
-	 * Calling newServer with wrong certificate location. 
-	 *  
-	 */
-	@Test(expected=RuntimeException.class)
-	public void wrongCertificateLocation() {
-		
-		SSLOptions options = new SSLOptions();
-		
-		options.setCertificateFile("certs/voms_service.cert.pe");
-		options.setKeyFile("certs/voms_service.key.pem");
-		options.setTrustStoreDirectory("certs/ca");
-		
-		ServerFactory.newServer("localhost", 443, options);
+  /**
+   * Calling newServer with wrong certificate location.
+   * 
+   */
+  @Test
+  public void wrongCertificateLocation() {
 
-	}
+    SSLOptions options = new SSLOptions();
 
-	
-	/**
-	 * Calling newServer with wrong key location. 
-	 * 
-	 */
-	@Test(expected=RuntimeException.class)
-	public void wrongKeyLocation() {
-		
-		SSLOptions options = new SSLOptions();
-		
-		options.setCertificateFile("certs/voms_service.cert.pem");
-		options.setKeyFile("certs/voms_service.key.pe");
-		options.setTrustStoreDirectory("certs/ca");
-		
-		ServerFactory.newServer("localhost", 443, options);
-		
-	}
+    options.setCertificateFile("certs/voms_service.cert.pe");
+    options.setKeyFile("certs/voms_service.key.pem");
+    options.setTrustStoreDirectory("certs/ca");
 
-	/**
-	 * Calling newServer with certificate location pointing to a non certificate file. 
-	 * 
-	 */
-	@Test(expected=RuntimeException.class)
-	public void wrongCertificate() {
-		
-		SSLOptions options = new SSLOptions();
-		
-		options.setCertificateFile("certs/README");
-		options.setKeyFile("certs/voms_service.key.pem");
-		options.setTrustStoreDirectory("certs/ca");
-		
-		ServerFactory.newServer("localhost", 443, options);
-		
-	}
-	
-	
+    Server s = ServerFactory.newServer("localhost", 443, options);
+
+    Assert.assertNull(s);
+
+  }
+
+  /**
+   * Calling newServer with wrong key location.
+   * 
+   */
+  @Test
+  public void wrongKeyLocation() {
+
+    SSLOptions options = new SSLOptions();
+
+    options.setCertificateFile("certs/voms_service.cert.pem");
+    options.setKeyFile("certs/voms_service.key.pe");
+    options.setTrustStoreDirectory("certs/ca");
+
+    Server s = ServerFactory.newServer("localhost", 443, options);
+
+    Assert.assertNull(s);
+
+  }
+
+  /**
+   * Calling newServer with certificate location pointing to a non certificate
+   * file.
+   * 
+   */
+  public void wrongCertificate() {
+
+    SSLOptions options = new SSLOptions();
+
+    options.setCertificateFile("certs/README");
+    options.setKeyFile("certs/voms_service.key.pem");
+    options.setTrustStoreDirectory("certs/ca");
+
+    Server s = ServerFactory.newServer("localhost", 443, options);
+
+    Assert.assertNull(s);
+
+  }
+
 }

@@ -15,6 +15,8 @@
  */
 package org.italiangrid.utils.https;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
@@ -156,10 +158,41 @@ public class ServerFactory {
     return server;
   }
 
+  private static void checkFileExistsAndIsReadable(File f, String prefix){
+    
+    String errorMessage = null;
+    
+    if (!f.exists()){
+      errorMessage = "File does not exist";
+    } else if (!f.canRead()){
+      errorMessage = "File is not readable";
+    } else if (f.isDirectory()){
+      errorMessage = "File is a directory";
+    }
+    
+    if (errorMessage != null){
+      String msg = String.format("%s: %s [%s]", prefix, errorMessage, 
+        f.getAbsolutePath());
+      throw new RuntimeException(msg);
+    }
+    
+  }
+  
+  private static void serviceCredentialsSanityChecks(SSLOptions options){
+    checkFileExistsAndIsReadable(new File(options.getCertificateFile()), 
+      "Error accessing certificate");
+    
+    checkFileExistsAndIsReadable(new File(options.getKeyFile()), 
+      "Error accessing private key");
+  }
+  
+  
   private static SSLContext configureSSLContext(
     X509CertChainValidatorExt validator, SSLOptions options)
     throws KeyStoreException, CertificateException, IOException {
 
+    serviceCredentialsSanityChecks(options);
+    
     PEMCredential serviceCredentials = new PEMCredential(options.getKeyFile(),
       options.getCertificateFile(), options.getKeyPassword());
 
