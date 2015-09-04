@@ -26,7 +26,7 @@ import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.BlockingChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -190,11 +190,12 @@ public class JettyAdminService {
   protected Server buildAdminService() {
 
     adminService = new Server();
-    adminService.setSendServerVersion(false);
-    adminService.setSendDateHeader(false);
+    
     adminService.setStopAtShutdown(true);
 
-    BlockingChannelConnector connector = new BlockingChannelConnector();
+    ServerConnector connector = new ServerConnector(adminService);
+    
+    
     connector.setHost(adminHost);
     connector.setPort(adminPort);
     adminService.setConnectors(new Connector[] { connector });

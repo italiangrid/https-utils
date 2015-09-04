@@ -29,7 +29,6 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
 import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.italiangrid.utils.https.JettyRunThread;
 import org.italiangrid.utils.https.SSLOptions;
 import org.italiangrid.utils.https.ServerFactory;
@@ -72,6 +71,8 @@ public class TestServer {
     options.setCertificateFile(serverCertFile);
     options.setKeyFile(serverKeyFile);
     options.setTrustStoreDirectory(trustStoreDir);
+    options.setNeedClientAuth(false);
+    options.setWantClientAuth(false);
 
     CANLListener l = new CANLListener();
 
@@ -99,13 +100,6 @@ public class TestServer {
       .setHandlers(new Handler[] { sessions, vomsHandler, new OkHandler() });
 
     s.setHandler(handlers);
-
-    QueuedThreadPool tp = new QueuedThreadPool(300);
-    tp.setMaxQueued(500);
-    tp.setMinThreads(10);
-
-    s.setThreadPool(tp);
-
     JettyRunThread rt = new JettyRunThread(s);
     rt.start();
 
@@ -115,14 +109,17 @@ public class TestServer {
 
     String cert = System.getenv("X509_USER_CERT");
     String key = System.getenv("X509_USER_KEY");
+    
     boolean secure = (System.getenv("HTTPS_UTILS_INSECURE") == null);
 
-    if (cert == null)
+    if (cert == null){
       cert = "/etc/grid-security/hostcert.pem";
-
-    if (key == null)
+    }
+    
+    if (key == null){
       key = "/etc/grid-security/hostkey.pem";
-
+    }
+    
     String trustDir = "/etc/grid-security/certificates";
 
     String hostname = "localhost";

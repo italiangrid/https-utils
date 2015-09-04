@@ -54,11 +54,15 @@ public class VOMSSecurityContextImpl extends SecurityContextImpl implements
   @Override
   public void setClientCertChain(X509Certificate[] clientCertChain) {
 
-    super.setClientCertChain(clientCertChain);
-    if (!secure)
-      vomsAttributes = validator.parse(clientCertChain);
-    else
-      vomsAttributes = validator.validate(clientCertChain);
+    if (clientCertChain != null){
+      super.setClientCertChain(clientCertChain);
+      
+      if (!secure) {
+        vomsAttributes = validator.parse(clientCertChain);
+      } else {
+        vomsAttributes = validator.validate(clientCertChain);
+      }
+    }
   }
 
   @Override

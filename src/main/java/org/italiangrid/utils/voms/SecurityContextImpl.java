@@ -217,6 +217,10 @@ public class SecurityContextImpl implements SecurityContext {
    */
   public void setClientCertChain(X509Certificate[] clientCertChain) {
 
+    if (clientCertChain == null){
+      return;
+    }
+      
     X509Certificate[] orderedClientCertChain = null;
 
     try {

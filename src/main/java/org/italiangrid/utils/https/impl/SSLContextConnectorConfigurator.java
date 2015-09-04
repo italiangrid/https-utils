@@ -19,8 +19,13 @@ import java.util.Arrays;
 
 import javax.net.ssl.SSLContext;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.italiangrid.utils.https.JettySSLConnectorConfigurator;
 import org.italiangrid.utils.https.SSLOptions;
@@ -30,8 +35,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link JettySSLConnectorConfigurator} that configures the connector
  * starting from a given {@link SSLContext}.
- *
- * @author andreaceccanti
  *
  */
 public class SSLContextConnectorConfigurator implements
@@ -46,13 +49,12 @@ public class SSLContextConnectorConfigurator implements
   /**
    * The SSL context that will be used for the configuration
    */
-  protected SSLContext sslContext;
+  private final SSLContext sslContext;
 
   public SSLContextConnectorConfigurator(SSLContext ctxt) {
 
     sslContext = ctxt;
   }
-  
 
   public void logSSLContextFactoryConfig(SslContextFactory factory) {
 
@@ -82,9 +84,19 @@ public class SSLContextConnectorConfigurator implements
 
   }
 
-  public Connector configureConnector(String host, int port, SSLOptions options) {
+  /**
+   * Returns the SSL context defined for this configurator
+   *
+   * @return the SSL context defined for this configurator
+   */
+  public SSLContext getSslContext() {
 
-    Connector connector;
+    return sslContext;
+  }
+
+  @Override
+  public ServerConnector configureSSLConnector(Server server, String host,
+    int port, SSLOptions options) {
 
     if (sslContext == null) {
       log.error("Cannot initialize SSL out of a null SSL context!");
@@ -121,38 +133,32 @@ public class SSLContextConnectorConfigurator implements
       factory.setNeedClientAuth(options.isNeedClientAuth());
 
       logSSLContextFactoryConfig(factory);
+      
+      HttpConfiguration httpsConfig = new HttpConfiguration();
+      
+      httpsConfig.setSecureScheme("https");
+      httpsConfig.setSecurePort(port);
+      httpsConfig.setOutputBufferSize(32768);
+      httpsConfig.setRequestHeaderSize(8192);
+      httpsConfig.setResponseHeaderSize(8192);
+      httpsConfig.setSendServerVersion(true);
+      httpsConfig.setSendDateHeader(false);
 
-      connector = new SslSelectChannelConnector(factory);
-      connector.setHost(host);
+      httpsConfig.addCustomizer(new SecureRequestCustomizer());
+      
+      ServerConnector connector = new ServerConnector(server,
+        new SslConnectionFactory(factory, HttpVersion.HTTP_1_1.asString()),
+        new HttpConnectionFactory(httpsConfig));
+
       connector.setPort(port);
+      server.addConnector(connector);
 
       return connector;
 
     } catch (Throwable t) {
 
-      log.error("SSL initialization error!", t);
+      log.error("SSL connector creation failed!", t);
       return null;
     }
-
-  }
-
-  /**
-   * Sets the SSL context for this configurator
-   *
-   * @param sslContext the ssl context
-   */
-  public void setSslContext(SSLContext sslContext) {
-
-    this.sslContext = sslContext;
-  }
-
-  /**
-   * Returns the SSL context defined for this configurator
-   *
-   * @return the SSL context defined for this configurator
-   */
-  public SSLContext getSslContext() {
-
-    return sslContext;
   }
 }
